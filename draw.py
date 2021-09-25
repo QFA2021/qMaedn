@@ -16,7 +16,6 @@ def on_draw():
 
 def f2s(i):
   DOTS_PER_Q = 10
-
   if i < 40: # regular playing field
     quarter = i // DOTS_PER_Q
     i = i % DOTS_PER_Q
@@ -30,6 +29,19 @@ def f2s(i):
     x = 5
     y = 1 + i
     return rot90(x, y, quarter)
+  elif i < 72:
+    i = i % 56
+    quarter = i // 4
+    i = i % 4
+    x = i % 2
+    y = 1 - i // 2
+    if quarter == 1 or quarter == 2:
+      y += 9
+    if quarter == 2 or quarter == 3:
+      x += 9
+    return x, y
+  else:
+    raise ValueError("Given linear index is out of bounds, max is 71")
 
     
 def rot90(x, y, times):
@@ -39,7 +51,7 @@ def rot90(x, y, times):
     x, y = y, -x
   return x+5, y+5
 
-for i in range(56):
+for i in range(72):
   x, y = f2s(i)
   print(f"{i}: {x},{y}")
 
