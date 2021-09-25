@@ -18,14 +18,28 @@ class Board:
     def __init__(self, window):
       self.shapes = []
       self.window = window
-      self.gridsize = min(*window.get_size()) // 11
+      self.gridsize = min(*window.get_size()) // 12
+      print(self.gridsize)
 
 
     def get_batch(self, batch):
-      size = self.gridsize // 2 - 10
-      self.shapes.append(pyglet.shapes.Circle(self.gridsize // 2,self.gridsize //2, self.gridsize // 2, color=(255,255,0), batch=batch))
+      background = pyglet.graphics.OrderedGroup(0)
+      middleground = pyglet.graphics.OrderedGroup(1)
+      foreground = pyglet.graphics.OrderedGroup(2)
+      color = (0, 0, 0)
+      size = self.gridsize // 2 - 4
+      width = 3
       for i in range(72):
-        pass
+        gx, gy = util.lin2grid(i)
+        px, py = gx * self.gridsize + self.gridsize//2, gy * self.gridsize + self.gridsize//2
+        color = util.get_color(i)
+        outer_circle = pyglet.shapes.Circle(px + size//2, py + size//2, size, color=color, batch=batch, group=background)
+        inner_circle = pyglet.shapes.Circle(px + size//2, py + size//2, size-width, color=(255, 255, 255), batch=batch, group=middleground)
+        text = pyglet.text.Label(str(i), font_name='Arial', font_size=12,x=px + size//2, y=py + size//2, color=(0,0,0,255), anchor_x='center', anchor_y='center',batch=batch, group=foreground)
+
+        self.shapes.append(outer_circle)
+        self.shapes.append(inner_circle)
+        self.shapes.append(text)
       
 
     def initialize_players(self):

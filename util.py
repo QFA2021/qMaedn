@@ -71,6 +71,26 @@ def rot90(x, y, times):
     return x + 5, y + 5
 
 
+
+def get_color(x):
+  RED = (255, 0, 0)
+  GREEN = (0, 255, 0)
+  BLUE = (0, 0, 255)
+  YELLOW = (255, 255, 0)
+  DEFAULT = (0, 0, 0)
+  if x == 0 or (x >= 40 and x < 44) or (x >= 56 and x < 60): 
+    return RED
+  elif x == 10 or (x >= 44 and x < 48) or (x >= 60 and x < 64): 
+    return BLUE
+  elif x == 20 or (x >= 48 and x < 52) or (x >= 64 and x < 68): 
+    return GREEN
+  elif x == 30 or (x >= 52 and x < 56) or (x >= 68 and x < 72): 
+    return GREEN
+  else:
+    return DEFAULT
+
+  #if x == 10 or (x >= 
+
 def test_consistency():
     for i in range(0, 72):
         x, y = lin2grid(i)
