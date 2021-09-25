@@ -38,7 +38,7 @@ def grid2lin(x, y):
     return None
 
   x, y = rot90(x, y, (4-quarter) % 4)
-  #print(f"q{quarter} {x}, {y}")
+  print(f"q{quarter} {x}, {y}")
 
   # starting points
   if x + y <= 2:
@@ -52,12 +52,13 @@ def grid2lin(x, y):
   else:
     if x == 0 and y == 5:
       i = 9
-    elif y == 5 and x <= 4:
+    elif y == 4 and x <= 4:
       i = 8 - x
     elif x == 4:
       i = y
     else:
       return None
+    return i + 10 * quarter
 
 def rot90(x, y, times):
   x = x-5

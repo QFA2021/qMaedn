@@ -8,11 +8,10 @@ global board, window
 
 if __name__ == "__main__":
 
-    board = Board()
-    window = pyglet.window.Window(width=500, height=500)
+    window = pyglet.window.Window(width=1000, height=1000)
     batch = pyglet.graphics.Batch()
-  #  board.get_batch(batch)
-    circle = pyglet.shapes.Circle(100,100,50, color=(255,255,0), batch=batch)
+    board = Board(window)
+    board.get_batch(batch)
 
 
     @window.event

@@ -2,6 +2,8 @@ import pyglet
 from enum import Enum
 from pyglet import shapes
 
+import util
+
 class Color(Enum):
     GREEN = 1
     BLUE = 2
@@ -13,6 +15,10 @@ class Board:
 
        # self.fields = self.get_coordinate_system()
        # self.players = self.initialize_players()
+    def __init__(self, window):
+      self.shapes = []
+      self.window = window
+      self.gridsize = min(*window.get_size()) // 11
 
 
     def get_coordinate_system(self):
@@ -29,6 +35,13 @@ class Board:
                 field = Field(x1, x2, y1, y2, (x+1) * (y+1))
                 fields.append(field)
         return fields
+
+    def get_batch(self, batch):
+      size = self.gridsize // 2 - 10
+      self.shapes.append(pyglet.shapes.Circle(self.gridsize // 2,self.gridsize //2, self.gridsize // 2, color=(255,255,0), batch=batch))
+      for i in range(72):
+        pass
+      
 
     def initialize_players(self):
         player_1 = Player(Color.GREEN, "P1")
