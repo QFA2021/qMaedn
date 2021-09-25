@@ -13,9 +13,9 @@ def on_draw():
 
 #pyglet.app.run()
 
+DOTS_PER_Q = 10
 
 def lin2grid(i):
-  DOTS_PER_Q = 10
   if i < 40: # regular playing field
     quarter = i // DOTS_PER_Q
     i = i % DOTS_PER_Q
@@ -35,19 +35,45 @@ def lin2grid(i):
     i = i % 4
     x = i % 2
     y = 1 - i // 2
-    if quarter == 1 or quarter == 2:
-      y += 9
-    if quarter == 2 or quarter == 3:
-      x += 9
-    return x, y
+    return rot90(x, y, quarter)
   else:
     raise ValueError("Given linear index is out of bounds, max is 71")
 
-def grid2lin():
-  pass
+def grid2lin(x, y):
+  quarter = 0
+  if y > 5 and x < 6:
+    quarter = 1
+  elif y > 4 and x > 5:
+    quarter = 2
+  elif y < 5 and x > 4:
+    quarter = 3
+  elif x == 5 and y == 5:
+    return None
+
+  x, y = rot90(x, y, (4-quarter) % 4)
+  #print(f"q{quarter} {x}, {y}")
+
+  # starting points
+  if x + y <= 2:
+    i = 56 + x + 2 - 2 * y
+    return i + 4 * quarter
+  # houses
+  elif x > 0 and y == 5:
+    i = 40 + x-1
+    return i + 4 * ((quarter + 1) % 4)
+  # regular field
+  else:
+    if x == 0 and y == 5:
+      i = 9
+    elif y == 5 and x <= 4:
+      i = 8 - x
+    elif x == 4:
+      i = y
+    else:
+      return None
+  
   
 
-    
 def rot90(x, y, times):
   x = x-5
   y = y-5
@@ -55,8 +81,20 @@ def rot90(x, y, times):
     x, y = y, -x
   return x+5, y+5
 
-for i in range(72):
-  x, y = lin2grid(i)
-  print(f"{i}: {x},{y}")
+def test_consistency():
+  for i in range(0, 72):
+    x, y = lin2grid(i)
+    #print(f"{i}: {x}, {y}")
+    i2 = grid2lin(x, y)
+    print(f"i: {i}, i2: {i2}")
+    assert i == i2
 
+#for i in range(72):
+  #x, y = lin2grid(i)
+  #print(f"{i}: {x},{y}")
 
+for y in range(2):
+  for x in range(2):
+    print(f"{x}, {y}: {grid2lin(x, y)}")
+
+test_consistency()
