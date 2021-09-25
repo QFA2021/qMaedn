@@ -85,7 +85,7 @@ def get_color(x):
   elif x == 20 or (x >= 48 and x < 52) or (x >= 64 and x < 68): 
     return GREEN
   elif x == 30 or (x >= 52 and x < 56) or (x >= 68 and x < 72): 
-    return GREEN
+    return YELLOW
   else:
     return DEFAULT
 
