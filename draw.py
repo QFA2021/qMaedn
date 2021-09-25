@@ -14,7 +14,7 @@ def on_draw():
 #pyglet.app.run()
 
 
-def f2s(i):
+def lin2grid(i):
   DOTS_PER_Q = 10
   if i < 40: # regular playing field
     quarter = i // DOTS_PER_Q
@@ -43,6 +43,10 @@ def f2s(i):
   else:
     raise ValueError("Given linear index is out of bounds, max is 71")
 
+def grid2lin():
+  pass
+  
+
     
 def rot90(x, y, times):
   x = x-5
@@ -52,7 +56,7 @@ def rot90(x, y, times):
   return x+5, y+5
 
 for i in range(72):
-  x, y = f2s(i)
+  x, y = lin2grid(i)
   print(f"{i}: {x},{y}")
 
 
