@@ -1,5 +1,5 @@
 import pyglet
-from Game import *
+from game import *
 
 global board, window
 
@@ -17,7 +17,6 @@ if __name__ == "__main__":
     @window.event
     def on_draw():
         window.clear()
-
         batch.draw()
 
     pyglet.app.run()

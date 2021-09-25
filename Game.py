@@ -21,21 +21,6 @@ class Board:
       self.gridsize = min(*window.get_size()) // 11
 
 
-    def get_coordinate_system(self):
-        w_pixel_size = self.w // 11
-        h_pixel_size = self.h // 11
-        fields = []
-
-        for y in range(0, 11):
-            y1 = y * h_pixel_size
-            y2 = y * h_pixel_size + h_pixel_size
-            for x in range(0, 11):
-                x1 = x * w_pixel_size
-                x2 = x * w_pixel_size + w_pixel_size
-                field = Field(x1, x2, y1, y2, (x+1) * (y+1))
-                fields.append(field)
-        return fields
-
     def get_batch(self, batch):
       size = self.gridsize // 2 - 10
       self.shapes.append(pyglet.shapes.Circle(self.gridsize // 2,self.gridsize //2, self.gridsize // 2, color=(255,255,0), batch=batch))
@@ -90,14 +75,14 @@ class Field:
 
 
 class Stone:
-    def __init__(self, colour, position):
-        self.colour = colour
+    def __init__(self, color, position):
+        self.color = color
         self.entangled = False
         self.position = position
         self.other = None
 
-    def change_colour(self, new_colour):
-        self.colour = new_colour
+    def set_colour(self, color):
+        self.color = color
 
     def is_entangled(self):
         return self.entangled
@@ -106,22 +91,38 @@ class Stone:
         self.other = other
 
     def disentangle(self):
+        self.entangled = False
+        self.other = None
+        #TODO: Change color or position?
+
+    def draw(self, batch):
         pass
 
-    def draw(self, canvas):
-        pass
-
-
+    def move_to(self, position):
+        #TODO: The validator validates here?
+        self.position = position
 
 class HadamardGate:
-    def __init__(self, field):
-        self.field = field
+    def __init__(self, position):
+        self.position = position
 
     @staticmethod
     def apply(self, stone1: Stone, stone2: Stone):
         stone1.entangled = True
         stone2.entangled = True
 
+class XGate:
+    def __init__(self, position):
+        self.position = position
 
-if __name__ == "__main__":
-    Board()
+    @staticmethod
+    def apply(self, stone: Stone, color:Color):
+        stone.color = color
+
+class PhaseShiftGate:
+    def __init__(self, position):
+        self.position = position
+
+    @staticmethod
+    def apply():
+        pass
