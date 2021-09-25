@@ -2,7 +2,6 @@ import pyglet
 
 DOTS_PER_Q = 10
 
-
 def lin2grid(i):
     if i < 40:  # regular playing field
         quarter = i // DOTS_PER_Q
@@ -109,5 +108,3 @@ if __name__ == "__main__":
         for x in range(2):
             print(f"{x}, {y}: {grid2lin(x, y)}")
     test_consistency()
-
-test_consistency()
