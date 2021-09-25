@@ -1,17 +1,4 @@
 import pyglet
-from pyglet import shapes
-
-window = pyglet.window.Window()
-field = pyglet.graphics.Batch()
-
-
-shapes.Circle(x=10, y=10, radius=50, color=(255, 0, 255), batch=field)
-@window.event
-def on_draw():
-    window.clear()
-    batch.draw()
-
-#pyglet.app.run()
 
 DOTS_PER_Q = 10
 
@@ -71,8 +58,6 @@ def grid2lin(x, y):
       i = y
     else:
       return None
-  
-  
 
 def rot90(x, y, times):
   x = x-5
@@ -86,15 +71,17 @@ def test_consistency():
     x, y = lin2grid(i)
     #print(f"{i}: {x}, {y}")
     i2 = grid2lin(x, y)
-    print(f"i: {i}, i2: {i2}")
+    print(f"({x}, {y}) i: {i}, i2: {i2}")
     assert i == i2
 
+if __name__ == "__main__":
 #for i in range(72):
-  #x, y = lin2grid(i)
-  #print(f"{i}: {x},{y}")
+    #x, y = lin2grid(i)
+    #print(f"{i}: {x},{y}")
 
-for y in range(2):
-  for x in range(2):
-    print(f"{x}, {y}: {grid2lin(x, y)}")
+  for y in range(2):
+    for x in range(2):
+      print(f"{x}, {y}: {grid2lin(x, y)}")
+  test_consistency()
 
 test_consistency()
