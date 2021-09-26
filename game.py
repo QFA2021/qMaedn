@@ -21,8 +21,6 @@ DELTA_PHASE = {2: (1, 0), 12: (0, -1), 22: (-1, 0), 32: (0, 1)}
 
 class Board:
 
-    # self.fields = self.get_coordinate_system()
-    # self.players = self.initialize_players()
     def __init__(self, window):
         self.shapes = []
         self.window = window
@@ -33,22 +31,22 @@ class Board:
     def get_stone_batch(self, batch):
 
         for stone in self.stones:
-            path_name = "resources/pngs/einfarbig/"
-            img_path = path_name + stone.get_colour()[0].value + ".png"
+            path_name = "resources/pngs/"
             if stone.entangled:
-                img_path = stone.get_colour()[0].value[0] + "_" + stone.get_colour()[1].value[0] + ".png"
+                path_name += stone.get_colours()[0].value[0] + "_" + stone.get_colours()[1].value[0] + ".png"
+            else:
+                path_name += stone.get_colour().value + ".png"
 
-            img = pyglet.image.load(img_path)
+            img = pyglet.image.load(path_name)
             img.anchor_x = img.height // 2
             img.anchor_y = img.height // 2
 
             gx, gy = util.lin2grid(stone.position)
-            px, py = gx * self.gridsize + self.gridsize // 2 , gy * self.gridsize + self.gridsize // 2
+            px, py = gx * self.gridsize + self.gridsize // 2, gy * self.gridsize + self.gridsize // 2
 
             sprite = pyglet.sprite.Sprite(img, px, py, batch=batch)
             sprite.scale = 0.5
             self.sprites.append(sprite)
-
 
     def __initialize_stones(self):
         stones = []
@@ -110,7 +108,6 @@ class Board:
             self.shapes.append(inner_circle)
             self.shapes.append(label)
 
-    # draw connections between control and phase gates
 
     def initialize_players(self):
         pass
@@ -144,19 +141,25 @@ class Stone:
         self.position = position
         self.other = None
 
-    def get_colour(self):
+    def get_colours(self):
         if self.entangled:
-            return self.__color__, self.other.__color__
-        return self.__color__, None
+            return self.__color__, self.other.get_colour()
+        raise ValueError("The stone is not entangled and has no multiple colors.")
+
+    def get_colour(self):
+        return self.__color__
 
     def entangle(self, other):
         self.other = other
         self.entangled = True
+        other.entangled = True
+        other.other = self
 
     def disentangle(self):
         self.entangled = False
         self.other = None
-        # TODO: Change color or position?
+        self.other.entangled = False
+        self.other.other = None
 
     def draw(self, batch):
         pass
