@@ -11,6 +11,20 @@ class Color(Enum):
     YELLOW = "yellow"
     RED = "red"
 
+house_coordinates = {
+    Color.RED: (39, 40),
+    Color.BLUE: (9, 44),
+    Color.GREEN: (19, 48), 
+    Color.YELLOW: (29, 52),
+}
+
+start_coordinates = {
+    Color.RED: (56, 0),
+    Color.BLUE: (60, 10),
+    Color.GREEN: (64, 20), 
+    Color.YELLOW: (68, 30),
+}
+
 DOTS_PER_Q = 10
 
 def lin2grid(i):
