@@ -4,7 +4,7 @@ from imageload import stonepngs, fieldpngs
 import pyglet
 
 import util
-from util import Color,Gate
+from util import Color, Gate
 
 IDX_HADAMARD = [4, 14, 24, 34]
 IDX_NOT = [9, 19, 29, 39]
@@ -20,6 +20,8 @@ class Board:
         The Board manages the batches of the playing board and the stones.
         :param window:Window
                 The pyglet window where the game is displayed
+        :param screen_size: int
+                The maximal size for the sidelength of a square to fit into the screen.
         """
         self.shapes = []
         self.window = window
@@ -72,7 +74,7 @@ class Board:
             px, py = gx * self.gridsize + self.gridsize // 2, gy * self.gridsize + self.gridsize // 2
 
             sprite = pyglet.sprite.Sprite(img, px, py, batch=batch)
-            sprite.scale = 0.5 * self.screensize/1000
+            sprite.scale = 0.5 * self.screensize / 1000
             self.sprites.append(sprite)
 
     def __initialize_stones(self):
@@ -105,6 +107,7 @@ class Board:
         middleground = pyglet.graphics.OrderedGroup(1)
         foreground = pyglet.graphics.OrderedGroup(2)
 
+        # places all 72 fields on the according position on the board
         for position in range(72):
             gatename = 'standart'
             if position in IDX_HADAMARD:
@@ -132,12 +135,13 @@ class Board:
             px, py = gx * self.gridsize + self.gridsize // 2, gy * self.gridsize + self.gridsize // 2
 
             sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=middleground)
-            sprite.scale = 0.5 * self.screensize/1000
+            sprite.scale = 0.5 * self.screensize / 1000
             self.sprites.append(sprite)
 
             # label = pyglet.text.Label(str(position), font_name='Arial', font_size=12, x=px, y=py,
             #         color=(0, 0, 0, 255), anchor_x='center', anchor_y='center', batch=batch, group=foreground)
 
+        # creating the connection lines between the phaseshift gates
         for i, j in zip(IDX_PHASE_1, IDX_PHASE_2):
             f_x, f_y = util.lin2grid(i)
             t_x, t_y = util.lin2grid(j)
@@ -146,7 +150,6 @@ class Board:
             connector = pyglet.shapes.Line(from_x, from_y, to_x, to_y, width=5, color=(0, 0, 0), batch=batch,
                                            group=background)
             self.shapes.append(connector)
-
 
     def initialize_players(self):
         pass
@@ -158,7 +161,7 @@ class Board:
             return color in self.field_map[i].get_colours()
         else:
             return True
-    
+
     def throw_stone(self, i):
         # TODO implement throwing of entangled stones
         stone = self.field_map.pop(i)
@@ -169,11 +172,13 @@ class Board:
         self.field_map[new_pos] = stone
         stone.move_to(new_pos)
 
+
 class Player:
     """
     colour: The colour that the player is represented by
     name: The name of the player
     """
+
     def __init__(self, color: Color, name):
         """
 

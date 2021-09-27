@@ -10,7 +10,7 @@ if __name__ == "__main__":
     display = pyglet.canvas.Display()
     screen = display.get_default_screen()
     screen_width, screen_height = screen.width, screen.height
-    screen_size = min(screen_height, screen_width) - 20
+    screen_size = min(screen_height, screen_width)
 
     window = pyglet.window.Window(width=screen_size, height=screen_size, resizable=True)
     pyglet.gl.glClearColor(255, 255, 255, 1.0)
