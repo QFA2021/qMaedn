@@ -2,6 +2,8 @@ import pyglet
 from game import *
 from pyglet.window import mouse
 from imageload import load_pngs
+from util import Color
+import validation
 
 global board, window
 
@@ -35,6 +37,7 @@ if __name__ == "__main__":
             stone = board.stone_on_the_move
             new_position = util.pix2lin(x, y, board.gridsize)
             print(new_position)
+            print(validation.validate(stone.position, new_position, 3, stone.get_colour(), board))
             board.field_map.pop(stone.position)
             board.field_map[new_position] = stone
             stone.move_to(new_position)

@@ -7,7 +7,7 @@ Created on Sat Sep 25 14:07:06 2021
     
 import util
 
-def validation(x,y,a,player): #x Ursprungsfeld, y Zielfeld, a Augenzahl, player Spieler
+def validate(x,y,a,color, board): #x Ursprungsfeld, y Zielfeld, a Augenzahl, player Spieler
     """
     Checks wether a move chosen by a player is valid
     Arguments: initial position x, aim position y, diced number a, player choosing the move 
@@ -31,28 +31,33 @@ def validation(x,y,a,player): #x Ursprungsfeld, y Zielfeld, a Augenzahl, player 
         util.Color.YELLOW: (68, 30),
     }
 
-    house_entry, house_first = house[player.color]
-
-    if x < house_entry and x+a > house_entry: # player has to walk into the house
+    house_entry, house_first = house[color]
+    if x >= house_first and x < house_first+4: # player is already in their house
+        if x+a != y or y >= house_first+4:
+            print('player already in house')
+            return False
+    elif x < house_entry and x+a > house_entry: # player has to walk into the house
         if y != house_first + a-1 - (house_entry - x):
+            print('player has to walk into house')
             return False
     else:
         if (x+a) % 40 != y:
+            print('dice result and movement doesn\'t add up')
             return False
     
-    if field_occupied(y, player.color):
+    if board.is_occupied(y, color):
         return False
 
-    start_first, start_field = start[player.color]
+    start_first, start_field = start[color]
     if x in range(start_first, start_first + 4) and y != start_field:
         return False
-    elif field_occupied(start_field, player.color):
+    elif board.is_occupied(start_field, color):
         if x != start_field:
             return False
     elif a == 6:
         # force player to move out of start if they have a stone there
         for i in range(start_first, start_first+4):
-            if field_occupied(i, player.color):
+            if board.is_occupied(i, color):
                 return False
     return True
         

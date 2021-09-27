@@ -139,6 +139,14 @@ class Board:
     def initialize_players(self):
         pass
 
+    def is_occupied(self, i, color=None):
+        if i not in self.field_map:
+            return False
+        elif color:
+            return color in self.field_map[i].get_colours()
+        else:
+            return True
+
 class Player:
     """
     colour: The colour that the player is represented by
@@ -193,6 +201,8 @@ class Stone:
         """
         if self.entangled:
             return self.__color__, self.other.get_colour()
+        else:
+            return (self.__color__,)
         raise ValueError("The stone is not entangled and has no multiple colors.")
 
     def get_colour(self):
