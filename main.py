@@ -9,15 +9,20 @@ global board, window
 
 
 if __name__ == "__main__":
+    # finding the size of the display to get the right scale
+    display = pyglet.canvas.Display()
+    screen = display.get_default_screen()
+    screen_width, screen_height = screen.width, screen.height
+    screen_size = min(screen_height, screen_width) - 20
 
-    window = pyglet.window.Window(width=1000, height=1000)
+    window = pyglet.window.Window(width=screen_size, height=screen_size, resizable=True)
     pyglet.gl.glClearColor(255, 255, 255, 1.0)
+    board = Board(window, screen_size)
     board_batch = pyglet.graphics.Batch()
     stone_batch = pyglet.graphics.Batch()
 
     load_pngs()
 
-    board = Board(window)
     board.initialize_board_batch(board_batch)
     board.update_stone_batch(stone_batch)
 
@@ -41,7 +46,7 @@ if __name__ == "__main__":
             print(new_position)
             move_valid = validation.validate(stone.position, new_position, 6, stone.get_colour(), board)
             print(move_valid)
-            if move_valid or not move_valid:
+            if move_valid:
                 if board.is_occupied(new_position):
                     print(f'throwing stone at {new_position}')
                     board.throw_stone(new_position)
@@ -53,7 +58,6 @@ if __name__ == "__main__":
     @window.event
     def on_draw():
         window.clear()
-        #TODO don't redraw the board since the board batch stays the same after initialisation
         board_batch.draw()
         stone_batch=pyglet.graphics.Batch()
         board.update_stone_batch(stone_batch)

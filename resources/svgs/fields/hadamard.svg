@@ -115,7 +115,7 @@
        gradientUnits="userSpaceOnUse"
        x="64.800282"
        y="100.33005"
-       gradientTransform="translate(4.5357143,113.77083)">
+       gradientTransform="translate(9.3465658,31.986355)">
       <meshrow
          id="meshrow4966">
         <meshpatch
@@ -147,9 +147,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="-15.847908"
-     inkscape:cy="955.89316"
+     inkscape:zoom="0.7"
+     inkscape:cx="324.58649"
+     inkscape:cy="637.0635"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -174,29 +174,24 @@
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     style="display:inline">
     <g
-       id="g6396"
-       transform="translate(4.8108515,-81.784475)"
+       id="g869"
+       inkscape:export-filename="C:\AAA-Data\Stipendium\Ferienakademie\QuantumMADN\qMaedn\resources\pngs\hadamard.png"
        inkscape:export-xdpi="39.453152"
        inkscape:export-ydpi="39.453152">
       <circle
          style="display:inline;opacity:0.995;fill:url(#meshgradient4954);fill-opacity:1;stroke:none;stroke-width:0.1"
          id="circle4946"
-         cx="101.67559"
-         cy="246.44048"
+         cx="106.48644"
+         cy="164.65601"
          r="45.735119" />
       <circle
-         style="opacity:0.995;fill:none;stroke:#ffffff;stroke-width:5.36;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         id="circle5042"
-         cx="101.67559"
-         cy="246.44048"
-         r="45.377106" />
-      <circle
-         style="opacity:0.995;fill:none;stroke:#000000;stroke-width:5.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="display:inline;opacity:0.995;fill:none;stroke:#000000;stroke-width:5.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="circle4948"
-         cx="101.67559"
-         cy="246.44048"
+         cx="106.48644"
+         cy="164.65601"
          r="45.735119" />
       <use
          x="56.413265"
@@ -205,7 +200,7 @@
          id="use4970"
          width="100%"
          height="100%"
-         transform="matrix(6.4198858,0,0,6.4198858,-296.68652,-150.82624)"
+         transform="matrix(6.4198858,0,0,6.4198858,-291.87567,-232.61072)"
          style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.517143;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <use
          x="56.413265"
@@ -214,18 +209,9 @@
          id="use4968"
          width="100%"
          height="100%"
-         transform="matrix(6.4198858,0,0,6.4198858,-296.68652,-150.82624)"
+         transform="matrix(6.4198858,0,0,6.4198858,-291.87567,-232.61072)"
          style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.283494;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
-    <use
-       x="56.413265"
-       y="65.753426"
-       xlink:href="#g0-72"
-       id="use4952"
-       width="100%"
-       height="100%"
-       transform="matrix(6.4198858,0,0,6.4198858,-296.69439,-151.1795)"
-       style="display:none;fill:#fdfdfd;fill-opacity:1;stroke:#000000;stroke-width:0.283494;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
   <script
      id="mesh_polyfill"

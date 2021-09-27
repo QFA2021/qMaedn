@@ -15,7 +15,7 @@ DELTA_PHASE = {2: (1, 0), 12: (0, -1), 22: (-1, 0), 32: (0, 1)}
 
 class Board:
 
-    def __init__(self, window):
+    def __init__(self, window, screen_size):
         """
         The Board manages the batches of the playing board and the stones.
         :param window:Window
@@ -23,6 +23,7 @@ class Board:
         """
         self.shapes = []
         self.window = window
+        self.screensize = screen_size
         self.gridsize = min(*window.get_size()) // 12
         self.stones = self.__initialize_stones()
         self.field_map = self.init_field_map()
@@ -59,7 +60,7 @@ class Board:
             px, py = gx * self.gridsize + self.gridsize // 2, gy * self.gridsize + self.gridsize // 2
 
             sprite = pyglet.sprite.Sprite(img, px, py, batch=batch)
-            sprite.scale = 0.5
+            sprite.scale = 0.5 * self.screensize/1000
             self.sprites.append(sprite)
 
     def __initialize_stones(self):
@@ -119,7 +120,7 @@ class Board:
             px, py = gx * self.gridsize + self.gridsize // 2, gy * self.gridsize + self.gridsize // 2
 
             sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=middleground)
-            sprite.scale = 0.5
+            sprite.scale = 0.5 * self.screensize/1000
             self.sprites.append(sprite)
 
             # label = pyglet.text.Label(str(position), font_name='Arial', font_size=12, x=px, y=py,
