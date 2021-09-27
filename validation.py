@@ -53,10 +53,10 @@ def validate(x,y,a,color, board): #x Ursprungsfeld, y Zielfeld, a Augenzahl, pla
         return False
 
     if x in range(start_first, start_first + 4) and y != start_field:
-        print('stone must move to start field')
+        print('stone must start out at to start field')
         return False
     elif board.is_occupied(start_field, color):
-        if x != start_field:
+        if x != start_field and not board.is_occupied((start_field+a)%40, color):
             print('stone must move away from start field')
             return False
     elif a == 6:

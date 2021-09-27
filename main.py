@@ -37,11 +37,13 @@ if __name__ == "__main__":
             stone = board.stone_on_the_move
             new_position = util.pix2lin(x, y, board.gridsize)
             print(new_position)
-            print(validation.validate(stone.position, new_position, 6, stone.get_colour(), board))
-            board.field_map.pop(stone.position)
-            board.field_map[new_position] = stone
-            stone.move_to(new_position)
-            board.stone_on_the_move = None
+            move_valid = validation.validate(stone.position, new_position, 6, stone.get_colour(), board)
+            print(move_valid)
+            if move_valid:
+                board.field_map.pop(stone.position)
+                board.field_map[new_position] = stone
+                stone.move_to(new_position)
+                board.stone_on_the_move = None
 
     @window.event
     def on_draw():
