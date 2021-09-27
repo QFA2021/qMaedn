@@ -9,7 +9,7 @@ from util import Color
 IDX_HADAMARD = [4, 14, 24, 34]
 IDX_NOT = [9, 19, 29, 39]
 IDX_PHASE_1 = [36, 26, 16, 6]
-IDX_PHASE_2 = [2, 12, 22, 32]
+IDX_PHASE_2 = [2, 32, 22, 12]
 DELTA_PHASE = {2: (1, 0), 12: (0, -1), 22: (-1, 0), 32: (0, 1)}
 
 
@@ -87,54 +87,52 @@ class Board:
                 The pyglet batch which is used for the board.
         :return:
         """
-        self.shapes = []
+
         background = pyglet.graphics.OrderedGroup(0)
         middleground = pyglet.graphics.OrderedGroup(1)
         foreground = pyglet.graphics.OrderedGroup(2)
-        color = (0, 0, 0)
-        size = self.gridsize // 2 - 4
-        width = 3
-        for i in range(72):
-            gx, gy = util.lin2grid(i)
+
+        for position in range(72):
+            gatename = 'standart'
+            if position in IDX_HADAMARD:
+                gatename = 'hadamard'
+            elif position in IDX_NOT:
+                gatename = 'not'
+            elif position in (10, 44, 45, 46, 47, 60, 61, 62, 63):  # all blue fields
+                gatename = 'bluefield'
+            elif position in (20, 48, 49, 50, 51, 64, 65, 66, 67):  # all green fields
+                gatename = 'greenfield'
+            elif position in (30, 52, 53, 54, 55, 68, 69, 70, 71):  # all yellow fields
+                gatename = 'yellowfield'
+            elif position in (0, 40, 41, 42, 43, 56, 57, 58, 59):  # all red fields
+                gatename = 'redfield'
+            elif position in IDX_PHASE_2:
+                orientation = {'2': 'l', '12': 't', '22': 'r', '32': 'b'}
+                gatename = 'phase_' + orientation[str(position)]
+            elif position in IDX_PHASE_1:
+                gatename = 'phase_control'
+            img = fieldpngs[gatename]
+            img.anchor_x = img.height // 2
+            img.anchor_y = img.height // 2
+
+            gx, gy = util.lin2grid(position)
             px, py = gx * self.gridsize + self.gridsize // 2, gy * self.gridsize + self.gridsize // 2
-            color = util.get_color(i)
 
-            if i in IDX_HADAMARD:
-                label_text = 'H'
-                label_size = 36
-            elif i in IDX_NOT:
-                label_text = 'X'
-                label_size = 36
-            elif i in IDX_PHASE_1:
-                pass
-            else:
-                label_text = str(i)
-                label_size = 12
+            sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=middleground)
+            sprite.scale = 0.5
+            self.sprites.append(sprite)
 
-            outer_circle = pyglet.shapes.Circle(px, py, size, color=color, batch=batch, group=background)
-            inner_circle = pyglet.shapes.Circle(px, py, size - width, color=(255, 255, 255), batch=batch,
-                                                group=middleground)
-            if i in IDX_PHASE_1:
-                label = pyglet.shapes.Circle(px, py, 10, color=(0, 0, 0), batch=batch, group=foreground)
-            elif i in IDX_PHASE_2:
-                label = pyglet.text.Label("S", font_name='Arial', font_size=36, x=px, y=py, color=(0, 0, 0, 255),
-                                          anchor_x='center', anchor_y='center', batch=batch, group=foreground)
-                dx, dy = DELTA_PHASE[i]
-                from_x = px + dx * size
-                from_y = py + dy * size
-                to_x = px + dx * self.gridsize * 2
-                to_y = py + dy * self.gridsize * 2
-                connector = pyglet.shapes.Line(from_x, from_y, to_x, to_y, width=3, color=(0, 0, 0), batch=batch,
-                                               group=foreground)
-                self.shapes.append(connector)
-            else:
-                label = pyglet.text.Label(label_text, font_name='Arial', font_size=label_size, x=px, y=py,
-                                          color=(0, 0, 0, 255), anchor_x='center', anchor_y='center', batch=batch,
-                                          group=foreground)
+            # label = pyglet.text.Label(str(position), font_name='Arial', font_size=12, x=px, y=py,
+            #         color=(0, 0, 0, 255), anchor_x='center', anchor_y='center', batch=batch, group=foreground)
 
-            self.shapes.append(outer_circle)
-            self.shapes.append(inner_circle)
-            self.shapes.append(label)
+        for i, j in zip(IDX_PHASE_1, IDX_PHASE_2):
+            f_x, f_y = util.lin2grid(i)
+            t_x, t_y = util.lin2grid(j)
+            from_x, from_y = f_x * self.gridsize + self.gridsize // 2, f_y * self.gridsize + self.gridsize // 2,
+            to_x, to_y = t_x * self.gridsize + self.gridsize // 2, t_y * self.gridsize + self.gridsize // 2
+            connector = pyglet.shapes.Line(from_x, from_y, to_x, to_y, width=5, color=(0, 0, 0), batch=batch,
+                                           group=background)
+            self.shapes.append(connector)
 
     def initialize_players(self):
         pass
