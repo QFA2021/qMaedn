@@ -32,15 +32,19 @@ def validate(x,y,a,color, board): #x Ursprungsfeld, y Zielfeld, a Augenzahl, pla
     }
 
     house_entry, house_first = house[color]
+    start_first, start_field = start[color]
+
     if x >= house_first and x < house_first+4: # player is already in their house
         if x+a != y or y >= house_first+4:
             print('player already in house')
             return False
-    elif x < house_entry and x+a > house_entry: # player has to walk into the house
+    elif x <= house_entry and x+a > house_entry: # player has to walk into the house
         if y != house_first + a-1 - (house_entry - x):
             print('player has to walk into house')
             return False
-    else:
+    elif x in range(start_first, start_first+4): # stone is leaving the start (handled below)
+        pass
+    else: # normal move on the gameboard
         if (x+a) % 40 != y:
             print('dice result and movement doesn\'t add up')
             return False
@@ -48,16 +52,18 @@ def validate(x,y,a,color, board): #x Ursprungsfeld, y Zielfeld, a Augenzahl, pla
     if board.is_occupied(y, color):
         return False
 
-    start_first, start_field = start[color]
     if x in range(start_first, start_first + 4) and y != start_field:
+        print('stone must move to start field')
         return False
     elif board.is_occupied(start_field, color):
         if x != start_field:
+            print('stone must move away from start field')
             return False
     elif a == 6:
         # force player to move out of start if they have a stone there
         for i in range(start_first, start_first+4):
-            if board.is_occupied(i, color):
+            if board.is_occupied(i, color) and y != start_field:
+                print('stone must move to start field')
                 return False
     return True
         
