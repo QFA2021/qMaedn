@@ -6,6 +6,9 @@ import util
 
 
 class Color(Enum):
+    """
+    Set of 4 colors. One for each player.
+    """
     GREEN = "green"
     BLUE = "blue"
     YELLOW = "yellow"
@@ -108,23 +111,31 @@ class Board:
             self.shapes.append(inner_circle)
             self.shapes.append(label)
 
-
     def initialize_players(self):
         pass
 
 
 class Player:
-    """
-    colour: The colour that the player is represented by
-    name: The name of the player
-    """
 
     def __init__(self, color: Color, name):
+        """
+
+        :param color:Color
+                The colour that the player is represented by
+        :param name:str
+                The name of the player
+        """
         self.name = name
         self.color = color
         self.stones = []
 
     def set_stones(self, stones):
+        """
+
+        :param stones:
+
+        :return:
+        """
         self.stones = stones
 
     def add_stone(self, stone):
@@ -136,26 +147,49 @@ class Player:
 
 class Stone:
     def __init__(self, color, position):
+        """
+        A playing stone which the players can move on the board.
+        :param color:Color
+                The color of the stone. Representing which player the stone belongs to.
+        :param position:int
+                The index of the field which encodes the position of the stone on the board.
+        """
         self.__color__ = color
         self.entangled = False
         self.position = position
         self.other = None
 
     def get_colours(self):
+        """
+        Only used for entangled stones. Returns both colors of the entangled stone.
+        """
         if self.entangled:
             return self.__color__, self.other.get_colour()
         raise ValueError("The stone is not entangled and has no multiple colors.")
 
     def get_colour(self):
+        """
+        Only used for not entangled stones. Returns the color of the stone.
+        """
         return self.__color__
 
     def entangle(self, other):
+        """
+        Entangles the stone itself with another stone on the board.
+        :param other:Stone
+                The other stone with which the entanglement takes place.
+        :return:
+        """
         self.other = other
         self.entangled = True
         other.entangled = True
         other.other = self
 
     def disentangle(self):
+        """
+        Only used for already entangled stones. Disentangles the stone and it's entangled partner.
+        :return:
+        """
         self.entangled = False
         self.other = None
         self.other.entangled = False
@@ -165,6 +199,12 @@ class Stone:
         pass
 
     def move_to(self, position):
+        """
+        Moves a stone from it's current position to a new position.
+        :param position:int
+                The index of the field where the stone is supposed to move to.
+        :return:
+        """
         # TODO: The validator validates here?
         self.position = position
 
