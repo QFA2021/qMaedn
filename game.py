@@ -25,7 +25,16 @@ class Board:
         self.window = window
         self.gridsize = min(*window.get_size()) // 12
         self.stones = self.__initialize_stones()
+        self.field_map = self.init_field_map()
         self.sprites = []
+        self.stone_on_the_move = None
+
+    def init_field_map(self):
+        field_map = {}
+        for stone in self.stones:
+            print(stone.position)
+            field_map[stone.position] = stone
+        return field_map
 
     def update_stone_batch(self, batch):
         """
@@ -130,9 +139,19 @@ class Board:
     def initialize_players(self):
         pass
 
+    def is_occupied(self, i, color=None):
+        if i not in self.field_map:
+            return False
+        elif color:
+            return color in self.field_map[i].get_colours()
+        else:
+            return True
 
 class Player:
-
+    """
+    colour: The colour that the player is represented by
+    name: The name of the player
+    """
     def __init__(self, color: Color, name):
         """
 
@@ -162,6 +181,7 @@ class Player:
 
 
 class Stone:
+
     def __init__(self, color, position):
         """
         A playing stone which the players can move on the board.
@@ -181,6 +201,8 @@ class Stone:
         """
         if self.entangled:
             return self.__color__, self.other.get_colour()
+        else:
+            return (self.__color__,)
         raise ValueError("The stone is not entangled and has no multiple colors.")
 
     def get_colour(self):
