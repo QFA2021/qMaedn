@@ -1,3 +1,5 @@
+from enum import Enum
+from imageload import stonepngs, fieldpngs
 
 import pyglet
 
@@ -35,13 +37,12 @@ class Board:
         """
 
         for stone in self.stones:
-            path_name = "resources/pngs/"
             if stone.entangled:
-                path_name += stone.get_colours()[0].value[0] + "_" + stone.get_colours()[1].value[0] + ".png"
+                stone_name = stone.get_colours()[0].value[0] + "_" + stone.get_colours()[1].value[0]
             else:
-                path_name += stone.get_colour().value + ".png"
+                stone_name = stone.get_colour().value
 
-            img = pyglet.image.load(path_name)
+            img = stonepngs[stone_name]
             img.anchor_x = img.height // 2
             img.anchor_y = img.height // 2
 
