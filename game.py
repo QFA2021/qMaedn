@@ -4,17 +4,7 @@ from imageload import stonepngs, fieldpngs
 import pyglet
 
 import util
-
-
-class Color(Enum):
-    """
-    Set of 4 colors. One for each player.
-    """
-    GREEN = "green"
-    BLUE = "blue"
-    YELLOW = "yellow"
-    RED = "red"
-
+from util import Color
 
 IDX_HADAMARD = [4, 14, 24, 34]
 IDX_NOT = [9, 19, 29, 39]
