@@ -36,6 +36,8 @@ if __name__ == "__main__":
         if board.stone_on_the_move is not None:
             stone = board.stone_on_the_move
             new_position = util.pix2lin(x, y, board.gridsize)
+            if not new_position:
+                return
             print(new_position)
             move_valid = validation.validate(stone.position, new_position, 6, stone.get_colour(), board)
             print(move_valid)
