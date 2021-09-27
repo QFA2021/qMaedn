@@ -1,4 +1,15 @@
 import pyglet
+from enum import Enum
+
+
+class Color(Enum):
+    """
+    Set of 4 colors. One for each player.
+    """
+    GREEN = "green"
+    BLUE = "blue"
+    YELLOW = "yellow"
+    RED = "red"
 
 DOTS_PER_Q = 10
 
