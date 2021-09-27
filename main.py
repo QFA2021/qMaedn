@@ -22,34 +22,31 @@ if __name__ == "__main__":
 
     @window.event
     def on_mouse_press(x, y, button, modifiers):
-        pass
+        position = util.pix2lin(x,y, board.gridsize)
+        print(position)
+        if position in board.field_map:
+            stone = board.field_map[position]
+            board.stone_on_the_move = stone
 
 
     @window.event
     def on_mouse_release(x, y, button, modifiers):
-        pass
-
-    @window.event
-    def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
-        if buttons & mouse.LEFT:
-            gridsize = min(*window.get_size()) // 12
-            position = util.grid2lin(x//gridsize, y//gridsize)
-            print(position)
-            if position in board.field_map:
-                print("found")
-                stone = board.field_map[position]
-                new_x = x + dx
-                new_y = y + dy
-                new_position = util.grid2lin(new_x, new_y)
-                stone.move_to(new_position)
-                board.field_map.pop(position)
-                board.field_map[new_position] = stone
+        if board.stone_on_the_move is not None:
+            stone = board.stone_on_the_move
+            new_position = util.pix2lin(x, y, board.gridsize)
+            print(new_position)
+            board.field_map.pop(stone.position)
+            board.field_map[new_position] = stone
+            stone.move_to(new_position)
+            board.stone_on_the_move = None
 
     @window.event
     def on_draw():
         window.clear()
         #TODO don't redraw the board since the board batch stays the same after initialisation
         board_batch.draw()
+        stone_batch=pyglet.graphics.Batch()
+        board.update_stone_batch(stone_batch)
         stone_batch.draw()
 
     pyglet.app.run()

@@ -27,6 +27,7 @@ class Board:
         self.stones = self.__initialize_stones()
         self.field_map = self.init_field_map()
         self.sprites = []
+        self.stone_on_the_move = None
 
     def init_field_map(self):
         field_map = {}
