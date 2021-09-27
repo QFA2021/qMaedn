@@ -59,7 +59,7 @@ if __name__ == "__main__":
             print(new_position)
             move_valid = validation.validate(stone.position, new_position, 6, stone.get_colour(), board)
             print(move_valid)
-            if move_valid:
+            if move_valid or not move_valid:
                 if board.is_occupied(new_position):
                     print(f'throwing stone at {new_position}')
                     board.throw_stone(new_position)
