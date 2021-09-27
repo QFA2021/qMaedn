@@ -11,6 +11,21 @@ class Color(Enum):
     YELLOW = "yellow"
     RED = "red"
 
+class State(Enum):
+    START = 0
+    WAIT_DICE = 1
+    WAIT_COLOR = 2
+    WAIT_PAIR = 3
+    WAIT_COLLAPSE = 4
+
+class Gate(Enum):
+    """
+    Set of 3 quantum gates.
+    """
+    H = "H"
+    S = "S"
+    X = "X"
+
 house_coordinates = {
     Color.RED: (39, 40),
     Color.BLUE: (9, 44),
@@ -24,6 +39,8 @@ start_coordinates = {
     Color.GREEN: (64, 20), 
     Color.YELLOW: (68, 30),
 }
+
+
 
 DOTS_PER_Q = 10
 
