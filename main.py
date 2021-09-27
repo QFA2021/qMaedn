@@ -12,8 +12,8 @@ if __name__ == "__main__":
     stone_batch = pyglet.graphics.Batch()
 
     board = Board(window)
-    board.get_batch(board_batch)
-    board.get_stone_batch(stone_batch)
+    board.initialize_board_batch(board_batch)
+    board.update_stone_batch(stone_batch)
 
 
     @window.event

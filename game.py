@@ -25,13 +25,25 @@ DELTA_PHASE = {2: (1, 0), 12: (0, -1), 22: (-1, 0), 32: (0, 1)}
 class Board:
 
     def __init__(self, window):
+        """
+        The Board manages the batches of the playing board and the stones.
+        :param window:Window
+                The pyglet window where the game is displayed
+        """
         self.shapes = []
         self.window = window
         self.gridsize = min(*window.get_size()) // 12
         self.stones = self.__initialize_stones()
         self.sprites = []
 
-    def get_stone_batch(self, batch):
+    def update_stone_batch(self, batch):
+        """
+        Continuously called when the application runs. Updates the visuals for everything
+        that happens on the board, e.g. position and color of the stones.
+        :param batch:Batch
+                The pyglet batch which is used for the stones.
+        :return:
+        """
 
         for stone in self.stones:
             path_name = "resources/pngs/"
@@ -52,6 +64,12 @@ class Board:
             self.sprites.append(sprite)
 
     def __initialize_stones(self):
+        """
+        Called when the board is created to put the stones into their starting positions.
+        :return:
+                Returns a list of all the stone-objects. The starting positions and colors are
+                stored int the stones.
+        """
         stones = []
         range_dic = {Color.RED: range(56, 60), Color.BLUE: range(60, 64), Color.GREEN: range(64, 68),
                      Color.YELLOW: range(68, 72)}
@@ -61,7 +79,15 @@ class Board:
 
         return stones
 
-    def get_batch(self, batch):
+    def initialize_board_batch(self, batch):
+        """
+        Initializes the batch of the board. This only contains the visuals
+        which are not changed during the game. The information for all visuals
+        is stored in the batch which is handed as an input.
+        :param batch:Batch
+                The pyglet batch which is used for the board.
+        :return:
+        """
         self.shapes = []
         background = pyglet.graphics.OrderedGroup(0)
         middleground = pyglet.graphics.OrderedGroup(1)
@@ -211,10 +237,22 @@ class Stone:
 
 class HadamardGate:
     def __init__(self, position):
+        """
+        A special playing field on the board which creates and destroys entanglement.
+        :param position:int
+                The index of the field where this special gate is located.
+        """
         self.position = position
 
     @staticmethod
     def apply(self, stone1: Stone, stone2: Stone):
+        """
+
+        :param self:
+        :param stone1:
+        :param stone2:
+        :return:
+        """
         stone1.entangled = True
         stone2.entangled = True
 
