@@ -1,7 +1,7 @@
 import pyglet
 from game import *
 from pyglet.window import mouse
-
+from imageload import load_pngs
 
 global board, window
 
@@ -13,9 +13,11 @@ if __name__ == "__main__":
     board_batch = pyglet.graphics.Batch()
     stone_batch = pyglet.graphics.Batch()
 
+    load_pngs()
+
     board = Board(window)
-    board.get_batch(board_batch)
-    board.get_stone_batch(stone_batch)
+    board.initialize_board_batch(board_batch)
+    board.update_stone_batch(stone_batch)
 
 
     @window.event
@@ -46,6 +48,7 @@ if __name__ == "__main__":
     @window.event
     def on_draw():
         window.clear()
+        #TODO don't redraw the board since the board batch stays the same after initialisation
         board_batch.draw()
         stone_batch.draw()
 

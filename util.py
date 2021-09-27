@@ -1,4 +1,15 @@
 import pyglet
+from enum import Enum
+
+
+class Color(Enum):
+    """
+    Set of 4 colors. One for each player.
+    """
+    GREEN = "green"
+    BLUE = "blue"
+    YELLOW = "yellow"
+    RED = "red"
 
 DOTS_PER_Q = 10
 
@@ -61,6 +72,16 @@ def grid2lin(x, y):
             return None
         return i + 10 * quarter
 
+def pix2lin(x, y, gridsize):
+    gx = x // gridsize
+    gy = y // gridsize
+    return grid2lin(gx, gy)
+
+def lin2pix(i, gridsize):
+    gx, gy = lin2grid(i)
+    px = gx * gridsize + gridsize //2
+    py = gy * gridsize + gridsize //2
+    return px, py
 
 def rot90(x, y, times):
     x = x - 5

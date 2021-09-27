@@ -1,15 +1,10 @@
 from enum import Enum
+from imageload import stonepngs, fieldpngs
 
 import pyglet
 
 import util
-
-
-class Color(Enum):
-    GREEN = "green"
-    BLUE = "blue"
-    YELLOW = "yellow"
-    RED = "red"
+from util import Color
 
 IDX_HADAMARD = [4, 14, 24, 34]
 IDX_NOT = [9, 19, 29, 39]
@@ -21,6 +16,11 @@ DELTA_PHASE = {2: (1, 0), 12: (0, -1), 22: (-1, 0), 32: (0, 1)}
 class Board:
 
     def __init__(self, window):
+        """
+        The Board manages the batches of the playing board and the stones.
+        :param window:Window
+                The pyglet window where the game is displayed
+        """
         self.shapes = []
         self.window = window
         self.gridsize = min(*window.get_size()) // 12
@@ -35,16 +35,22 @@ class Board:
             field_map[stone.position] = stone
         return field_map
 
-    def get_stone_batch(self, batch):
+    def update_stone_batch(self, batch):
+        """
+        Continuously called when the application runs. Updates the visuals for everything
+        that happens on the board, e.g. position and color of the stones.
+        :param batch:Batch
+                The pyglet batch which is used for the stones.
+        :return:
+        """
 
         for stone in self.stones:
-            path_name = "resources/pngs/"
             if stone.entangled:
-                path_name += stone.get_colours()[0].value[0] + "_" + stone.get_colours()[1].value[0] + ".png"
+                stone_name = stone.get_colours()[0].value[0] + "_" + stone.get_colours()[1].value[0]
             else:
-                path_name += stone.get_colour().value + ".png"
+                stone_name = stone.get_colour().value
 
-            img = pyglet.image.load(path_name)
+            img = stonepngs[stone_name]
             img.anchor_x = img.height // 2
             img.anchor_y = img.height // 2
 
@@ -56,6 +62,12 @@ class Board:
             self.sprites.append(sprite)
 
     def __initialize_stones(self):
+        """
+        Called when the board is created to put the stones into their starting positions.
+        :return:
+                Returns a list of all the stone-objects. The starting positions and colors are
+                stored int the stones.
+        """
         stones = []
         range_dic = {Color.RED: range(56, 60), Color.BLUE: range(60, 64), Color.GREEN: range(64, 68),
                      Color.YELLOW: range(68, 72)}
@@ -65,7 +77,15 @@ class Board:
 
         return stones
 
-    def get_batch(self, batch):
+    def initialize_board_batch(self, batch):
+        """
+        Initializes the batch of the board. This only contains the visuals
+        which are not changed during the game. The information for all visuals
+        is stored in the batch which is handed as an input.
+        :param batch:Batch
+                The pyglet batch which is used for the board.
+        :return:
+        """
         self.shapes = []
         background = pyglet.graphics.OrderedGroup(0)
         middleground = pyglet.graphics.OrderedGroup(1)
@@ -115,7 +135,6 @@ class Board:
             self.shapes.append(inner_circle)
             self.shapes.append(label)
 
-
     def initialize_players(self):
         pass
 
@@ -125,11 +144,24 @@ class Player:
     name: The name of the player
     """
     def __init__(self, color: Color, name):
+        """
+
+        :param color:Color
+                The colour that the player is represented by
+        :param name:str
+                The name of the player
+        """
         self.name = name
         self.color = color
         self.stones = []
 
     def set_stones(self, stones):
+        """
+
+        :param stones:
+
+        :return:
+        """
         self.stones = stones
 
     def add_stone(self, stone):
@@ -140,27 +172,51 @@ class Player:
 
 
 class Stone:
-    def __init__(self, color:Color, position):
+
+    def __init__(self, color, position):
+        """
+        A playing stone which the players can move on the board.
+        :param color:Color
+                The color of the stone. Representing which player the stone belongs to.
+        :param position:int
+                The index of the field which encodes the position of the stone on the board.
+        """
         self.__color__ = color
         self.entangled = False
         self.position = position
         self.other = None
 
     def get_colours(self):
+        """
+        Only used for entangled stones. Returns both colors of the entangled stone.
+        """
         if self.entangled:
             return self.__color__, self.other.get_colour()
         raise ValueError("The stone is not entangled and has no multiple colors.")
 
     def get_colour(self):
+        """
+        Only used for not entangled stones. Returns the color of the stone.
+        """
         return self.__color__
 
     def entangle(self, other):
+        """
+        Entangles the stone itself with another stone on the board.
+        :param other:Stone
+                The other stone with which the entanglement takes place.
+        :return:
+        """
         self.other = other
         self.entangled = True
         other.entangled = True
         other.other = self
 
     def disentangle(self):
+        """
+        Only used for already entangled stones. Disentangles the stone and it's entangled partner.
+        :return:
+        """
         self.entangled = False
         self.other = None
         self.other.entangled = False
@@ -170,16 +226,34 @@ class Stone:
         pass
 
     def move_to(self, position):
+        """
+        Moves a stone from it's current position to a new position.
+        :param position:int
+                The index of the field where the stone is supposed to move to.
+        :return:
+        """
         # TODO: The validator validates here?
         self.position = position
 
 
 class HadamardGate:
     def __init__(self, position):
+        """
+        A special playing field on the board which creates and destroys entanglement.
+        :param position:int
+                The index of the field where this special gate is located.
+        """
         self.position = position
 
     @staticmethod
     def apply(self, stone1: Stone, stone2: Stone):
+        """
+
+        :param self:
+        :param stone1:
+        :param stone2:
+        :return:
+        """
         stone1.entangled = True
         stone2.entangled = True
 
