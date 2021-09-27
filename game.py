@@ -11,7 +11,6 @@ class Color(Enum):
     YELLOW = "yellow"
     RED = "red"
 
-
 IDX_HADAMARD = [4, 14, 24, 34]
 IDX_NOT = [9, 19, 29, 39]
 IDX_PHASE_1 = [36, 26, 16, 6]
@@ -26,7 +25,15 @@ class Board:
         self.window = window
         self.gridsize = min(*window.get_size()) // 12
         self.stones = self.__initialize_stones()
+        self.field_map = self.init_field_map()
         self.sprites = []
+
+    def init_field_map(self):
+        field_map = {}
+        for stone in self.stones:
+            print(stone.position)
+            field_map[stone.position] = stone
+        return field_map
 
     def get_stone_batch(self, batch):
 
@@ -112,13 +119,11 @@ class Board:
     def initialize_players(self):
         pass
 
-
 class Player:
     """
     colour: The colour that the player is represented by
     name: The name of the player
     """
-
     def __init__(self, color: Color, name):
         self.name = name
         self.color = color
@@ -135,7 +140,7 @@ class Player:
 
 
 class Stone:
-    def __init__(self, color, position):
+    def __init__(self, color:Color, position):
         self.__color__ = color
         self.entangled = False
         self.position = position
