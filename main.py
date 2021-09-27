@@ -1,5 +1,6 @@
 import pyglet
 from game import *
+from pyglet.window import mouse
 from imageload import load_pngs
 
 global board, window
@@ -20,11 +21,34 @@ if __name__ == "__main__":
 
 
     @window.event
+    def on_mouse_press(x, y, button, modifiers):
+        position = util.pix2lin(x,y, board.gridsize)
+        print(position)
+        if position in board.field_map:
+            stone = board.field_map[position]
+            board.stone_on_the_move = stone
+
+
+    @window.event
+    def on_mouse_release(x, y, button, modifiers):
+        if board.stone_on_the_move is not None:
+            stone = board.stone_on_the_move
+            new_position = util.pix2lin(x, y, board.gridsize)
+            print(new_position)
+            board.field_map.pop(stone.position)
+            board.field_map[new_position] = stone
+            stone.move_to(new_position)
+            board.stone_on_the_move = None
+
+    @window.event
     def on_draw():
         window.clear()
         #TODO don't redraw the board since the board batch stays the same after initialisation
         board_batch.draw()
+        stone_batch=pyglet.graphics.Batch()
+        board.update_stone_batch(stone_batch)
         stone_batch.draw()
 
     pyglet.app.run()
+
 
