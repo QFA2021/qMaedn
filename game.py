@@ -4,7 +4,7 @@ from imageload import stonepngs, fieldpngs
 import pyglet
 
 import util
-from util import Color
+from util import Color,Gate
 
 IDX_HADAMARD = [4, 14, 24, 34]
 IDX_NOT = [9, 19, 29, 39]
@@ -26,8 +26,13 @@ class Board:
         self.gridsize = min(*window.get_size()) // 12
         self.stones = self.__initialize_stones()
         self.field_map = self.init_field_map()
+        self.gate_map = self.init_gate_map()
+        self.current_player = util.Color.BLUE
+        self.state = util.State.START
+
         self.sprites = []
         self.stone_on_the_move = None
+        self.stone_to_be_paired = None
 
     def init_field_map(self):
         field_map = {}
@@ -35,6 +40,13 @@ class Board:
             print(stone.position)
             field_map[stone.position] = stone
         return field_map
+
+    def init_gate_map(self):
+        gate_map = {}
+        for idx_h, idx_not in zip(IDX_HADAMARD, IDX_NOT):
+            gate_map[idx_h] = HadamardGate(idx_h)
+            gate_map[idx_not] = XGate(idx_not)
+        return gate_map
 
     def update_stone_batch(self, batch):
         """
@@ -134,6 +146,7 @@ class Board:
                                            group=background)
             self.shapes.append(connector)
 
+
     def initialize_players(self):
         pass
 
@@ -198,7 +211,7 @@ class Stone:
         :param position:int
                 The index of the field which encodes the position of the stone on the board.
         """
-        self.__color__ = color
+        self.color = color
         self.entangled = False
         self.position = position
         self.other = None
@@ -208,16 +221,15 @@ class Stone:
         Only used for entangled stones. Returns both colors of the entangled stone.
         """
         if self.entangled:
-            return self.__color__, self.other.get_colour()
+            return self.color, self.other.get_colour()
         else:
-            return (self.__color__,)
-        raise ValueError("The stone is not entangled and has no multiple colors.")
+            return (self.color,)
 
     def get_colour(self):
         """
         Only used for not entangled stones. Returns the color of the stone.
         """
-        return self.__color__
+        return self.color
 
     def entangle(self, other):
         """
@@ -231,15 +243,16 @@ class Stone:
         other.entangled = True
         other.other = self
 
-    def disentangle(self):
+    def disentangle(self, col1, col2):
         """
-        Only used for already entangled stones. Disentangles the stone and it's entangled partner.
-        :return:
+        Only used for already entangled stones. Disentangles the stone and its entangled partner.
         """
         self.entangled = False
         self.other = None
         self.other.entangled = False
         self.other.other = None
+        self.color = col1
+        self.other.col = col2
 
     def draw(self, batch):
         pass
@@ -262,6 +275,7 @@ class HadamardGate:
         :param position:int
                 The index of the field where this special gate is located.
         """
+        self.name = util.Gate.H
         self.position = position
 
     @staticmethod
@@ -273,13 +287,13 @@ class HadamardGate:
         :param stone2:
         :return:
         """
-        stone1.entangled = True
-        stone2.entangled = True
+        stone1.entangle(stone2)
 
 
 class XGate:
     def __init__(self, position):
         self.position = position
+        self.name = util.Gate.X
 
     @staticmethod
     def apply(self, stone: Stone, color: Color):
@@ -289,6 +303,7 @@ class XGate:
 class PhaseShiftGate:
     def __init__(self, position):
         self.position = position
+        self.name = util.Gate.S
 
     @staticmethod
     def apply():
