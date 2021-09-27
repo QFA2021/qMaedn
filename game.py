@@ -146,6 +146,16 @@ class Board:
             return color in self.field_map[i].get_colours()
         else:
             return True
+    
+    def throw_stone(self, i):
+        # TODO implement throwing of entangled stones
+        stone = self.field_map.pop(i)
+        start, _ = util.start_coordinates[stone.get_colour()]
+        new_pos = start
+        while self.is_occupied(new_pos) and new_pos < start + 4:
+            new_pos += 1
+        self.field_map[new_pos] = stone
+        stone.move_to(new_pos)
 
 class Player:
     """
