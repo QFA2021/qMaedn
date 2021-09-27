@@ -79,7 +79,16 @@ def forbidden_fields(player, a): #Returns all fields, on which a player can't mo
         i = i+1
     return y
             
-        
+def entangled_fields(player):
+    i = 0
+    p = 0
+    et = []
+    for i in range(72):
+        if stone.entangled(i) == True:
+            et = np.append(et, i)
+        else:
+        i = i+1
+    return et
         
 
 def validation_show(player, a):
@@ -96,16 +105,49 @@ def validation_show(player, a):
     hf = home_field(player)
     o = occupied_fields(player)
     y = forbidden_fields(player, a)
-    x = [] #List of pieces at positions x allowed to move
+    e = entangled_fields(player)
     
     owy = [i for i in o == True && i in y == False] #o without y - funktioniert das???
+    sio = [i for i in o == True && i in s == True]
+    ewy = [i for i in e == True && i in y == False]
     
+    sioAewy = [i for i in sio == True or i in ewy == True]
+    oWyas = [i for i in o == True && i in y == False && i in s == False]
+    
+    x = [] #List of pieces at positions x allowed to move
+    
+        
     if a == 6:
-        if ET == True: #ET liefert, ob player ein entangletes Paar Steine hat oder nicht
+        if stone.entangled == True: #ET liefert, ob player ein entangletes Paar Steine hat oder nicht
             if occupied(sf, player) == True:
                 if occupied(s, player) == True:
-                    x = np.append(x, sf)
+                    x = sf
                 else:
-                    x = np.append(x, owy)
+                    x = owy
+            else:
+                if occupied(s, player) == True:
+                    x = sioAewy
+                else:
+                    x = owy
+        else:
+            if occupied(sf, player) == True:
+                if occupied(s, player) == True:
+                    x = sf
+                else:
+                    x = owy
+            else:
+                if occupied(s, player) == True:
+                    x = sio
+                else:
+                    x = owy
     else:
+        if occupied(sf, player) == True:
+            if occupied(s, player) == True:
+                x = sf
+            else:
+                x = oWyas
+        else:
+            x = oWyas             
+    
+    return x
         
