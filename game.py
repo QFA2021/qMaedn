@@ -36,6 +36,8 @@ class Board:
         self.sprites = []
         self.stone_on_the_move = None
         self.stone_to_be_paired = None
+        self.stone_to_be_unpaired = None
+
 
     def init_field_map(self):
         field_map = {}
@@ -237,28 +239,28 @@ class Stone:
         """
         return self.color
 
-    def entangle(self, other):
+    def entangle(self, otherStone):
         """
         Entangles the stone itself with another stone on the board.
-        :param other:Stone
+        :param otherStone:Stone
                 The other stone with which the entanglement takes place.
         :return:
         """
-        self.other = other
+        self.other = otherStone
         self.entangled = True
-        other.entangled = True
-        other.other = self
+        otherStone.entangled = True
+        otherStone.other = self
 
     def disentangle(self, col1, col2):
         """
         Only used for already entangled stones. Disentangles the stone and its entangled partner.
         """
         self.entangled = False
-        self.other = None
         self.other.entangled = False
         self.other.other = None
         self.color = col1
         self.other.col = col2
+        self.other = None
 
     def draw(self, batch):
         pass
