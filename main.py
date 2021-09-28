@@ -1,20 +1,15 @@
 import validation
 from game import *
 from imageload import load_pngs
-from util import State
+from util import State, get_screensize
 
 global board, window
 
 if __name__ == "__main__":
-    # finding the size of the display to get the right scale
-    display = pyglet.canvas.Display()
-    screen = display.get_default_screen()
-    screen_width, screen_height = screen.width, screen.height
-    screen_size = min(screen_height, screen_width)
-
+    screen_size = get_screensize()
     window = pyglet.window.Window(width=screen_size, height=screen_size, resizable=True)
     pyglet.gl.glClearColor(255, 255, 255, 1.0)
-    board = Board(window, screen_size)
+    board = Board(window)
     board_batch = pyglet.graphics.Batch()
     stone_batch = pyglet.graphics.Batch()
 

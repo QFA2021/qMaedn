@@ -12,7 +12,7 @@ fieldpngs = {}                  # keys: fieldnames e.g. 'hadamard'      values: 
 stonelist = ['blue', 'green', 'red', 'yellow', 'b_g', 'b_r', 'b_y', 'g_b',
              'g_r', 'g_y', 'r_b', 'r_g', 'r_y', 'y_b', 'y_g', 'y_r']
 fieldlist = ['hadamard', 'not', 'phase_b', 'phase_l', 'phase_r', 'phase_t', 'phase_control',
-             'standart', 'bluefield', 'greenfield', 'redfield', 'yellowfield']
+             'standart', 'bluefield', 'greenfield', 'redfield', 'yellowfield', 'board']
 
 
 def load_stone_pngs():

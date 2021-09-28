@@ -1,5 +1,6 @@
 from enum import Enum
 from imageload import stonepngs, fieldpngs
+from util import get_screensize
 
 import pyglet
 
@@ -15,7 +16,7 @@ DELTA_PHASE = {2: (1, 0), 12: (0, -1), 22: (-1, 0), 32: (0, 1)}
 
 class Board:
 
-    def __init__(self, window, screen_size):
+    def __init__(self, window):
         """
         The Board manages the batches of the playing board and the stones.
         :param window:Window
@@ -25,8 +26,8 @@ class Board:
         """
         self.shapes = []
         self.window = window
-        self.screensize = screen_size
-        self.gridsize = min(*window.get_size()) // 12
+        self.screensize = get_screensize()
+        self.gridsize = min(*window.get_size()) // 13   # 12 to cover the whole window
         self.stones = self.__initialize_stones()
         self.field_map = self.init_field_map()
         self.gate_map = self.init_gate_map()
@@ -72,8 +73,7 @@ class Board:
             img.anchor_x = img.height // 2
             img.anchor_y = img.height // 2
 
-            gx, gy = util.lin2grid(stone.position)
-            px, py = gx * self.gridsize + self.gridsize // 2, gy * self.gridsize + self.gridsize // 2
+            px, py = util.lin2pix(stone.position, self.gridsize)
 
             sprite = pyglet.sprite.Sprite(img, px, py, batch=batch)
             sprite.scale = 0.5 * self.screensize / 1000
@@ -133,11 +133,10 @@ class Board:
             img.anchor_x = img.height // 2
             img.anchor_y = img.height // 2
 
-            gx, gy = util.lin2grid(position)
-            px, py = gx * self.gridsize + self.gridsize // 2, gy * self.gridsize + self.gridsize // 2
+            px, py = util.lin2pix(position, self.gridsize)
 
-            sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=middleground)
-            sprite.scale = 0.5 * self.screensize / 1000
+            sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=foreground)
+            sprite.scale = 0.45 * self.screensize / 1000
             self.sprites.append(sprite)
 
             # label = pyglet.text.Label(str(position), font_name='Arial', font_size=12, x=px, y=py,
@@ -145,13 +144,18 @@ class Board:
 
         # creating the connection lines between the phaseshift gates
         for i, j in zip(IDX_PHASE_1, IDX_PHASE_2):
-            f_x, f_y = util.lin2grid(i)
-            t_x, t_y = util.lin2grid(j)
-            from_x, from_y = f_x * self.gridsize + self.gridsize // 2, f_y * self.gridsize + self.gridsize // 2,
-            to_x, to_y = t_x * self.gridsize + self.gridsize // 2, t_y * self.gridsize + self.gridsize // 2
+            from_x, from_y = util.lin2pix(i, self.gridsize)
+            to_x, to_y = util.lin2pix(j, self.gridsize)
             connector = pyglet.shapes.Line(from_x, from_y, to_x, to_y, width=5, color=(0, 0, 0), batch=batch,
-                                           group=background)
+                                           group=middleground)
             self.shapes.append(connector)
+
+        # creating the background board
+        img = fieldpngs['board']
+        sprite = pyglet.sprite.Sprite(img, 0, 0, batch=batch, group=background)
+        sprite.scale = 1/650*self.screensize*0.92
+        self.sprites.append(sprite)
+
 
     def initialize_players(self):
         pass
