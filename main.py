@@ -57,7 +57,7 @@ if __name__ == "__main__":
             new_position = util.pix2lin(x, y, board.gridsize)
             if not new_position:
                 return
-            print(new_position)
+            print(new_position, board.state)
             move_valid = validation.validate(stone.position, new_position, 6, stone.get_colour(), board)
             print(move_valid)
             if move_valid or not move_valid:
@@ -82,7 +82,12 @@ if __name__ == "__main__":
                 elif board.gate_map[new_position].name == Gate.X:
                     board.stone_to_be_paired = stone
                     board.state = State.WAIT_COLOR
-
+                    board.field_map[new_position].color = Color.RED
+                elif board.gate_map[new_position].name == Gate.S:
+                    idx_1, idx_2 =  board.gate_map[new_position].position
+                    if board.is_occupied(idx_1) and board.is_occupied(idx_2):
+                        board.phase_shift()
+                    board.state = State.START
 
     @window.event
     def on_draw():
