@@ -36,7 +36,7 @@ if __name__ == "__main__":
         elif board.state == State.WAIT_COLLAPSE:
             if position in board.field_map:
 
-                #TODO: fix different colors problem
+                # TODO: fix different colors problem
                 if board.field_map[position] == board.stone_to_be_unpaired.other:
                     board.stone_to_be_unpaired.disentangle(board.stone_to_be_unpaired.other.color, board.current_player)
                     board.state = State.WAIT_DICE

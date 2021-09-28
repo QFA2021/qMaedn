@@ -48,7 +48,7 @@ DOTS_PER_Q = 10
 
 def lin2grid(i):
     if i < 40:  # regular playing field
-        quarter = i // DOTS_PER_Q
+        quarter = int(i // DOTS_PER_Q)
         i = i % DOTS_PER_Q
         y = max(i - 4, min(4, i))
         x = max(0, min(4, 4 - i + 4))
@@ -107,19 +107,17 @@ def grid2lin(x, y):
 
 
 # shift only works on nicos laptop
-#TODO fix the visuals for all users
+# TODO fix the visuals for all users
 
 def pix2lin(x, y, gridsize):
-    shift = get_screensize() / 24.7
+    shift = get_screensize() // 24.7
     gx = (x - shift) // gridsize
     gy = (y - shift) // gridsize
     return grid2lin(gx, gy)
 
 
-# delete + 35 to make it general
-
 def lin2pix(i, gridsize):
-    shift = get_screensize() / 24.7
+    shift = get_screensize() // 24.7
     gx, gy = lin2grid(i)
     px = gx * gridsize + gridsize // 2 + shift
     py = gy * gridsize + gridsize // 2 + shift
@@ -164,6 +162,9 @@ def test_consistency():
 
 
 def get_screensize():
+    """
+    Returns the smallest sidelength of the window when displayed on fullscreen.
+    """
     display = pyglet.canvas.Display()
     screen = display.get_default_screen()
     screen_width, screen_height = screen.width, screen.height

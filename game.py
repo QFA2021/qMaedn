@@ -27,7 +27,7 @@ class Board:
         self.shapes = []
         self.window = window
         self.screensize = get_screensize()
-        self.gridsize = min(*window.get_size()) // 13   # 12 to cover the whole window
+        self.gridsize = min(*window.get_size()) // 13  # 12 to cover the whole window
         self.stones = self.__initialize_stones()
         self.field_map = self.init_field_map()
         self.gate_map = self.init_gate_map()
@@ -38,7 +38,6 @@ class Board:
         self.stone_on_the_move = None
         self.stone_to_be_paired = None
         self.stone_to_be_unpaired = None
-
 
     def init_field_map(self):
         field_map = {}
@@ -153,9 +152,8 @@ class Board:
         # creating the background board
         img = fieldpngs['board']
         sprite = pyglet.sprite.Sprite(img, 0, 0, batch=batch, group=background)
-        sprite.scale = 1/650*self.screensize*0.92
+        sprite.scale = 1 / 650 * self.screensize * 0.92
         self.sprites.append(sprite)
-
 
     def initialize_players(self):
         pass
