@@ -1,11 +1,9 @@
-from enum import Enum
-from imageload import stonepngs, fieldpngs
-from util import get_screensize
-
 import pyglet
 
 import util
-from util import Color, Gate
+from imageload import stonepngs, fieldpngs
+from util import Color
+from util import get_screensize
 
 IDX_HADAMARD = [4, 14, 24, 34]
 IDX_NOT = [9, 19, 29, 39]
@@ -21,20 +19,23 @@ class Board:
         The Board manages the batches of the playing board and the stones.
         :param window:Window
                 The pyglet window where the game is displayed
-        :param screen_size: int
-                The maximal size for the sidelength of a square to fit into the screen.
         """
         self.shapes = []
+        self.sprites = []
+
         self.window = window
         self.screensize = get_screensize()
         self.gridsize = min(*window.get_size()) // 13  # 12 to cover the whole window
-        self.stones = self.__initialize_stones()
+
+        self.stones = self.initialize_stones()
         self.field_map = self.init_field_map()
         self.gate_map = self.init_gate_map()
-        self.current_player = util.Color.BLUE
+
+        self.current_player = None
+        self.players = self.initialize_players()
+
         self.state = util.State.START
 
-        self.sprites = []
         self.stone_on_the_move = None
         self.stone_to_be_paired = None
         self.stone_to_be_unpaired = None
@@ -82,7 +83,7 @@ class Board:
             sprite.scale = 0.5 * self.screensize / 1000
             self.sprites.append(sprite)
 
-    def __initialize_stones(self):
+    def initialize_stones(self):
         """
         Called when the board is created to put the stones into their starting positions.
         :return:
@@ -160,7 +161,17 @@ class Board:
         self.sprites.append(sprite)
 
     def initialize_players(self):
-        pass
+        player_1 = Player(Color.BLUE, "Player 1")
+        player_2 = Player(Color.BLUE, "Player 2")
+        player_3 = Player(Color.BLUE, "Player 3")
+        player_4 = Player(Color.BLUE, "Player 4")
+
+        player_1.next = player_2
+        player_2.next = player_3
+        player_3.next = player_4
+        player_4.next = player_1
+        self.current_player = player_1
+        return [player_1, player_2, player_3, player_4]
 
     def is_occupied(self, i, color=None):
         if i not in self.field_map:
@@ -226,22 +237,7 @@ class Player:
         """
         self.name = name
         self.color = color
-        self.stones = []
-
-    def set_stones(self, stones):
-        """
-
-        :param stones:
-
-        :return:
-        """
-        self.stones = stones
-
-    def add_stone(self, stone):
-        self.stones.append(stone)
-
-    def remove_stone(self, stone):
-        self.stones.remove(stone)
+        self.next = None
 
 
 class Stone:

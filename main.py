@@ -1,7 +1,7 @@
 import validation
 from game import *
 from imageload import load_pngs
-from util import State, get_screensize
+from util import State, get_screensize, Gate
 
 global board, window
 
@@ -19,7 +19,6 @@ if __name__ == "__main__":
     board.update_stone_batch(stone_batch)
 
 
-    # TODO:
     @window.event
     def on_mouse_press(x, y, button, modifiers):
         position = util.pix2lin(x, y, board.gridsize)
@@ -32,17 +31,23 @@ if __name__ == "__main__":
                 position].get_colour() is not board.current_player:
                 board.field_map[position].entangle(board.stone_to_be_paired)
                 board.state = State.WAIT_DICE
+                board.current_player = board.current_player.next
 
         elif board.state == State.WAIT_COLLAPSE:
             if position in board.field_map:
 
+                # TODO: current player is no longer a color
                 # TODO: fix different colors problem
-                if board.field_map[position] == board.stone_to_be_unpaired.other:
-                    board.stone_to_be_unpaired.disentangle(board.stone_to_be_unpaired.other.color, board.current_player)
+                if board.field_map[position] == board.stone_to_be_unpaired.other or board.field_map[position] == board.stone_to_be_unpaired:
+                    c1, c2 = board.field_map[position].get_colours()
+                    if c1 == board.current_player.color:
+                        other_color = c2
+                    else:
+                        other_color = c1
+                    board.field_map[position].disentangle(board.current_player.color, other_color)
                     board.state = State.WAIT_DICE
-                elif board.field_map[position] == board.stone_to_be_unpaired:
-                    board.stone_to_be_unpaired.disentangle(board.current_player, board.stone_to_be_unpaired.other.color)
-                    board.state = State.WAIT_DICE
+                    board.stone_to_be_unpaired = None
+                    board.current_player = board.current_player.next
 
 
         elif position in board.field_map:
@@ -68,6 +73,8 @@ if __name__ == "__main__":
                 board.field_map[new_position] = stone
                 stone.move_to(new_position)
                 board.stone_on_the_move = None
+                board.current_player = board.current_player.next
+
 
             if new_position in board.gate_map:
                 if board.gate_map[new_position].name == Gate.H:

@@ -62,7 +62,7 @@ def lin2grid(i):
         return rot90(x, y, quarter)
     elif i < 72:
         i = i % 56
-        quarter = i // 4
+        quarter = int(i // 4)
         i = i % 4
         x = i % 2
         y = 1 - i // 2
