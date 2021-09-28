@@ -55,7 +55,6 @@ def lin2grid(i):
         return rot90(x, y, quarter)
     elif i < 56:  # houses
         i = i % 40
-        #TODO: Look at this
         quarter = int(i // 4)
         i = i % 4  # 40 normal fields plus 4 per house
         x = 5
