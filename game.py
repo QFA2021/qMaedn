@@ -158,9 +158,9 @@ class Board:
 
     def initialize_players(self):
         player_1 = Player(Color.BLUE, "Player 1")
-        player_2 = Player(Color.BLUE, "Player 2")
-        player_3 = Player(Color.BLUE, "Player 3")
-        player_4 = Player(Color.BLUE, "Player 4")
+        player_2 = Player(Color.GREEN, "Player 2")
+        player_3 = Player(Color.YELLOW, "Player 3")
+        player_4 = Player(Color.RED, "Player 4")
 
         player_1.next = player_2
         player_2.next = player_3
@@ -257,7 +257,7 @@ class Stone:
         self.other.entangled = False
         self.other.other = None
         self.color = col1
-        self.other.col = col2
+        self.other.color = col2
         self.other = None
 
     def draw(self, batch):

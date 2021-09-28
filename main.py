@@ -32,10 +32,10 @@ if __name__ == "__main__":
                 board.field_map[position].entangle(board.stone_to_be_paired)
                 board.state = State.WAIT_DICE
                 board.current_player = board.current_player.next
+                print(board.current_player.name)
 
         elif board.state == State.WAIT_COLLAPSE:
             if position in board.field_map:
-
                 # TODO: current player is no longer a color
                 # TODO: fix different colors problem
                 if board.field_map[position] == board.stone_to_be_unpaired.other or board.field_map[position] == board.stone_to_be_unpaired:
@@ -48,7 +48,7 @@ if __name__ == "__main__":
                     board.state = State.WAIT_DICE
                     board.stone_to_be_unpaired = None
                     board.current_player = board.current_player.next
-
+                    print(board.current_player.name)
 
         elif position in board.field_map:
             stone = board.field_map[position]
@@ -73,7 +73,6 @@ if __name__ == "__main__":
                 board.field_map[new_position] = stone
                 stone.move_to(new_position)
                 board.stone_on_the_move = None
-                board.current_player = board.current_player.next
 
 
             if new_position in board.gate_map:
@@ -91,7 +90,8 @@ if __name__ == "__main__":
                     board.state = State.WAIT_COLOR
             else:
                 board.state = State.WAIT_DICE
-
+                board.current_player = board.current_player.next
+                print(board.current_player.name)
 
 
     @window.event
