@@ -114,49 +114,55 @@ if __name__ == "__main__":
                             board.state = State.WAIT_PAIR
                             board.stone_to_be_paired = stone
                     elif board.gate_map[new_position].name == Gate.X:
-                        color_frequency = board.count_stones_per_color()
-                        print(color_frequency)
-                        color_order = list(
-                            filter(
-                                lambda x: x[0] != board.current_player.color,
-                                sorted(
-                                    color_frequency.items(),
-                                    key=(lambda x: x[1])
-                                )
-                            )
-                        )
-                        print(color_order)
-
-                        # all color have same number -> let the player choose
-                        if list(color_frequency.values()) == [8, 8, 8, 8]:
-                            print("Stone changing to any color because all have same count")
-                            board.state = State.WAIT_COLOR         
-                            board.stone_to_be_paired = stone
-
-                            board.allowed_colors = list(Color)
-                            board.allowed_colors.remove(board.current_player.color)
-                            print(board.allowed_colors)
-                        # there is one color with minimal count -> that is the target
-                        elif color_order[0][1] < color_order[1][1]:
-                            print('Stone changing to unambiguous minimal color')
-                            board.field_map[new_position].color = color_order[0][0]
-                        # find the set of minimal colors -> let the player choose from those
-                        else:
-                            print("Stone changing to one of several minimal colors")
-                            _, minimal_count = color_order[0]
-                            minimal_colors = list(
-                                map(
-                                    lambda x: x[0],
-                                    filter(
-                                        lambda y: y[1] == minimal_count,
-                                        color_order
+                        if not stone.entangled:
+                            color_frequency = board.count_stones_per_color()
+                            print(color_frequency)
+                            color_order = list(
+                                filter(
+                                    lambda x: x[0] != board.current_player.color,
+                                    sorted(
+                                        color_frequency.items(),
+                                        key=(lambda x: x[1])
                                     )
                                 )
                             )
-                            print(minimal_colors)
-                            board.allowed_colors = minimal_colors
-                            board.state = State.WAIT_COLOR
-                            board.stone_to_be_paired = stone
+                            print(color_order)
+
+                            # all color have same number -> let the player choose
+                            if list(color_frequency.values()) == [8, 8, 8, 8]:
+                                print("Stone changing to any color because all have same count")
+                                board.state = State.WAIT_COLOR         
+                                board.stone_to_be_paired = stone
+
+                                board.allowed_colors = list(Color)
+                                board.allowed_colors.remove(board.current_player.color)
+                                print(board.allowed_colors)
+                            # there is one color with minimal count -> that is the target
+                            elif color_order[0][1] < color_order[1][1]:
+                                print('Stone changing to unambiguous minimal color')
+                                board.field_map[new_position].color = color_order[0][0]
+                                board.state = State.WAIT_DICE
+                                board.current_player = board.current_player.next
+                            # find the set of minimal colors -> let the player choose from those
+                            else:
+                                print("Stone changing to one of several minimal colors")
+                                _, minimal_count = color_order[0]
+                                minimal_colors = list(
+                                    map(
+                                        lambda x: x[0],
+                                        filter(
+                                            lambda y: y[1] == minimal_count,
+                                            color_order
+                                        )
+                                    )
+                                )
+                                print(minimal_colors)
+                                board.allowed_colors = minimal_colors
+                                board.state = State.WAIT_COLOR
+                                board.stone_to_be_paired = stone
+                        else: # stone is entangled
+                            board.state = State.WAIT_DICE
+                            board.current_player = board.current_player.next
 
                             
 
