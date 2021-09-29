@@ -239,15 +239,16 @@ class Board:
             stone.move_to(new_position)
         self.field_map = new_field_map
     
+    # note: this counts the number of *HALF* stones to account for entanglement
     def count_stones_per_color(self):
         count_map = {}
         for (_, stone) in self.field_map.items():
             if not stone.entangled:
                 if not stone.color in count_map:
                     count_map[stone.color] = 0
-                count_map[stone.color] += 1
+                count_map[stone.color] += 2
             else:
-                color_1, color_2 = stone.get_colors()
+                color_1, color_2 = stone.get_colours()
                 for color in [color_1, color_2]:
                     if not color in count_map:
                         count_map[stone.color] = 0
