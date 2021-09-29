@@ -16,7 +16,7 @@ stonelist = ['blue', 'green', 'red', 'yellow', 'b_g', 'b_r', 'b_y', 'g_b',
 fieldlist = ['hadamard', 'not', 'phase_b', 'phase_l', 'phase_r', 'phase_t', 'phase_control',
              'standart', 'bluefield', 'greenfield', 'redfield', 'yellowfield', 'board', 'logo']
 textlist = ['blue_turn', 'red_turn', 'green_turn', 'yellow_turn',
-            'do_dice', 'do_entangle', 'do_collapse', 'do_move']
+            'do_dice', 'do_entangle', 'do_collapse', 'do_move', 'do_colorchange']
 
 
 

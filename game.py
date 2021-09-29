@@ -230,6 +230,7 @@ class Board:
         sprite.scale = height / img.height * 0.05
         self.textimages[0] = sprite
 
+        sizefactor = 1
         if self.state == util.State.WAIT_DICE:
             to_do = 'do_dice'
         elif self.state == util.State.WAIT_PAIR:
@@ -238,6 +239,9 @@ class Board:
             to_do = 'do_collapse'
         elif self.state == util.State.WAIT_MOVE:
             to_do = 'do_move'
+        elif self.state == util.State.WAIT_COLOR:
+            to_do = 'do_colorchange'
+            sizefactor = 0.7
 
         img = textpngs[to_do]
         img.anchor_x = img.width // 2
@@ -246,7 +250,8 @@ class Board:
         px = (max(width, height) - min(width, height)) // 2 + min(width, height)
         py = height // (6 / 4.5)
         sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
-        sprite.scale = height / img.height * 0.05
+        sprite.scale = height / img.height * 0.05 * sizefactor
+        sizefactor = 1
         self.textimages[1] = sprite
 
 
