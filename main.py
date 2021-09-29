@@ -1,17 +1,22 @@
 import validation
 from game import *
+from pyglet.window import mouse
+import random
+
 from imageload import load_pngs
 from util import State, get_screensize, Gate
 
 global board, window
 
+
 if __name__ == "__main__":
-    screen_size = get_screensize()
-    window = pyglet.window.Window(width=screen_size, height=screen_size, resizable=True)
+    width, height = get_screensize()
+    window = pyglet.window.Window(width=width, height=height, resizable=True)
     pyglet.gl.glClearColor(255, 255, 255, 1.0)
     board = Board(window)
     board_batch = pyglet.graphics.Batch()
     stone_batch = pyglet.graphics.Batch()
+    control_batch = pyglet.graphics.Batch()
 
     load_pngs()
 
@@ -22,7 +27,17 @@ if __name__ == "__main__":
     @window.event
     def on_mouse_press(x, y, button, modifiers):
         position = util.pix2lin(x, y, board.gridsize)
-        if position is None:
+        print(f'position: {position}')
+
+        if board.state == State.WAIT_DICE:
+            if position == 'dice':
+                board.current_dicevalue = random.randint(1,6)
+                print(f'you diced a {board.current_dicevalue}')
+                board.state = State.WAIT_MOVE
+            else:
+                return
+
+        elif position is None or position == 'dice':
             return
         if board.state == State.WAIT_PAIR:
             # if the selected position corresponds to a stone and the stone has
@@ -32,12 +47,10 @@ if __name__ == "__main__":
                 board.field_map[position].entangle(board.stone_to_be_paired)
                 board.state = State.WAIT_DICE
                 board.current_player = board.current_player.next
+                print(board.current_player.name)
 
         elif board.state == State.WAIT_COLLAPSE:
             if position in board.field_map:
-
-                # TODO: current player is no longer a color
-                # TODO: fix different colors problem
                 if board.field_map[position] == board.stone_to_be_unpaired.other or board.field_map[position] == board.stone_to_be_unpaired:
                     c1, c2 = board.field_map[position].get_colours()
                     if c1 == board.current_player.color:
@@ -48,24 +61,29 @@ if __name__ == "__main__":
                     board.state = State.WAIT_DICE
                     board.stone_to_be_unpaired = None
                     board.current_player = board.current_player.next
+                    print(board.current_player.name)
 
 
-        elif position in board.field_map:
+        elif position in board.field_map and board.state == State.WAIT_MOVE:
             stone = board.field_map[position]
-            board.stone_on_the_move = stone
+            if board.current_player.color not in stone.get_colours():
+                return
+            else:
+                board.stone_on_the_move = stone
 
 
     @window.event
     def on_mouse_release(x, y, button, modifiers):
         if board.stone_on_the_move is not None:
             stone = board.stone_on_the_move
+            print("x: ", x, "y: ", y)
             new_position = util.pix2lin(x, y, board.gridsize)
-            if not new_position:
+            if new_position is None or new_position == 'dice':
                 return
-            print(new_position, board.state)
-            move_valid = validation.validate(stone.position, new_position, 6, stone.get_colour(), board)
+            print("New position: ", new_position)
+            move_valid = validation.validate(stone.position, new_position, board.current_dicevalue, stone.get_colour(), board)
             print(move_valid)
-            if move_valid or not move_valid:
+            if move_valid:
                 if board.is_occupied(new_position):
                     print(f'throwing stone at {new_position}')
                     board.throw_stone(new_position)
@@ -73,18 +91,16 @@ if __name__ == "__main__":
                 board.field_map[new_position] = stone
                 stone.move_to(new_position)
                 board.stone_on_the_move = None
-                board.current_player = board.current_player.next
 
 
-            if new_position in board.gate_map:
-                if board.gate_map[new_position].name == Gate.H:
-                    if stone.entangled:
-                        board.state = State.WAIT_COLLAPSE
-                        board.stone_to_be_unpaired = stone
-                    else:
-                        board.state = State.WAIT_PAIR
-                        board.stone_to_be_paired = stone
-
+                if new_position in board.gate_map:
+                    if board.gate_map[new_position].name == Gate.H:
+                        if stone.entangled:
+                            board.state = State.WAIT_COLLAPSE
+                            board.stone_to_be_unpaired = stone
+                        else:
+                            board.state = State.WAIT_PAIR
+                            board.stone_to_be_paired = stone
 
                 elif board.gate_map[new_position].name == Gate.X:
                     board.stone_to_be_paired = stone
@@ -95,6 +111,10 @@ if __name__ == "__main__":
                     if board.is_occupied(idx_1) and board.is_occupied(idx_2):
                         board.phase_shift()
                     board.state = State.START
+                else:
+                    board.state = State.WAIT_DICE
+                    board.current_player = board.current_player.next
+                    print(board.current_player.name)
 
     @window.event
     def on_draw():
@@ -103,6 +123,5 @@ if __name__ == "__main__":
         stone_batch = pyglet.graphics.Batch()
         board.update_stone_batch(stone_batch)
         stone_batch.draw()
-
 
     pyglet.app.run()

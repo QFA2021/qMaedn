@@ -18,6 +18,7 @@ class State(Enum):
     WAIT_COLOR = 2
     WAIT_PAIR = 3
     WAIT_COLLAPSE = 4
+    WAIT_MOVE = 5
 
 
 class Gate(Enum):
@@ -79,8 +80,8 @@ def grid2lin(x, y):
         quarter = 2
     elif y < 5 and x > 4:
         quarter = 3
-    elif x == 5 and y == 5:
-        return None
+    elif x == 5 and y == 5:                 # the center of the board where you can press the dice
+        return 'dice'
 
     x, y = rot90(x, y, (4 - quarter) % 4)
     print(f"q{quarter} {x}, {y}")
@@ -110,14 +111,14 @@ def grid2lin(x, y):
 # TODO fix the visuals for all users
 
 def pix2lin(x, y, gridsize):
-    shift = get_screensize() // 24.7
+    shift = min(get_screensize()) // 24.7
     gx = (x - shift) // gridsize
     gy = (y - shift) // gridsize
     return grid2lin(gx, gy)
 
 
 def lin2pix(i, gridsize):
-    shift = get_screensize() // 24.7
+    shift = min(get_screensize()) // 24.7
     gx, gy = lin2grid(i)
     px = gx * gridsize + gridsize // 2 + shift
     py = gy * gridsize + gridsize // 2 + shift
@@ -163,13 +164,13 @@ def test_consistency():
 
 def get_screensize():
     """
-    Returns the smallest sidelength of the window when displayed on fullscreen.
+    Returns the width and height of the screen in a tuple.
     """
     display = pyglet.canvas.Display()
     screen = display.get_default_screen()
     screen_width, screen_height = screen.width, screen.height
-    screen_size = min(screen_height, screen_width)
-    return screen_size
+    # screen_size = min(screen_height, screen_width)
+    return screen_width, screen_height
 
 
 if __name__ == "__main__":

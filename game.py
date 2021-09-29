@@ -1,7 +1,7 @@
 import pyglet
 
 import util
-from imageload import stonepngs, fieldpngs
+from imageload import stonepngs, fieldpngs, dicepngs
 from util import Color
 from util import get_screensize
 
@@ -22,9 +22,10 @@ class Board:
         """
         self.shapes = []
         self.sprites = []
+        self.diceimage = None
 
         self.window = window
-        self.screensize = get_screensize()
+        self.screensize = min(get_screensize())        # takes the min of height and width of the screen
         self.gridsize = min(*window.get_size()) // 13  # 12 to cover the whole window
 
         self.stones = self.initialize_stones()
@@ -32,9 +33,10 @@ class Board:
         self.gate_map = self.init_gate_map()
 
         self.current_player = None
+        self.current_dicevalue = 1
         self.players = self.initialize_players()
 
-        self.state = util.State.START
+        self.state = util.State.WAIT_DICE           #util.State.START
 
         self.stone_on_the_move = None
         self.stone_to_be_paired = None
@@ -66,7 +68,7 @@ class Board:
                 The pyglet batch which is used for the stones.
         :return:
         """
-
+        print(self.state)
         for stone in self.stones:
             if stone.entangled:
                 stone_name = stone.get_colours()[0].value[0] + "_" + stone.get_colours()[1].value[0]
@@ -82,6 +84,8 @@ class Board:
             sprite = pyglet.sprite.Sprite(img, px, py, batch=batch)
             sprite.scale = 0.5 * self.screensize / 1000
             self.sprites.append(sprite)
+
+        self.draw_dice(self.current_dicevalue, batch)
 
     def initialize_stones(self):
         """
@@ -160,11 +164,26 @@ class Board:
         sprite.scale = 1 / 650 * self.screensize * 0.92
         self.sprites.append(sprite)
 
+        # creating the dice
+        self.draw_dice(1, batch)
+
+        #creating the logo
+        img = fieldpngs['logo']
+        img.anchor_x = img.height // 2
+        img.anchor_y = img.height // 2
+        width, height = get_screensize()
+        px = (max(width, height) - min(width, height))//2 + min(width, height)
+        py = height // 3
+        sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=foreground)
+        sprite.scale = height / img.height * 0.5
+        self.sprites.append(sprite)
+
+
     def initialize_players(self):
         player_1 = Player(Color.BLUE, "Player 1")
-        player_2 = Player(Color.BLUE, "Player 2")
-        player_3 = Player(Color.BLUE, "Player 3")
-        player_4 = Player(Color.BLUE, "Player 4")
+        player_2 = Player(Color.GREEN, "Player 2")
+        player_3 = Player(Color.YELLOW, "Player 3")
+        player_4 = Player(Color.RED, "Player 4")
 
         player_1.next = player_2
         player_2.next = player_3
@@ -172,6 +191,21 @@ class Board:
         player_4.next = player_1
         self.current_player = player_1
         return [player_1, player_2, player_3, player_4]
+
+    def draw_dice(self, dicevalue, batch):
+        # creating the dice
+        img = dicepngs[str(dicevalue)]
+        img.anchor_x = img.height // 2
+        img.anchor_y = img.height // 2
+
+        position = util.grid2lin(4, 4)  # field in the bottom left of the dice
+        px, py = util.lin2pix(position, self.gridsize)
+        px += self.gridsize
+        py += self.gridsize
+        sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
+        sprite.scale = 0.45 * self.screensize / 1000
+        self.diceimage = sprite
+
 
     def is_occupied(self, i, color=None):
         if i not in self.field_map:
@@ -290,7 +324,7 @@ class Stone:
         self.other.entangled = False
         self.other.other = None
         self.color = col1
-        self.other.col = col2
+        self.other.color = col2
         self.other = None
 
     def draw(self, batch):
