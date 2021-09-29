@@ -150,7 +150,6 @@ def get_color(x):
     else:
         return DEFAULT
 
-    # if x == 10 or (x >=
 
 
 def test_consistency():
@@ -158,7 +157,7 @@ def test_consistency():
         x, y = lin2grid(i)
         # print(f"{i}: {x}, {y}")
         i2 = grid2lin(x, y)
-        print(f"({x}, {y}) i: {i}, i2: {i2}")
+        # print(f"({x}, {y}) i: {i}, i2: {i2}")
         assert i == i2
 
 
@@ -169,7 +168,6 @@ def get_screensize():
     display = pyglet.canvas.Display()
     screen = display.get_default_screen()
     screen_width, screen_height = screen.width, screen.height
-    # screen_size = min(screen_height, screen_width)
     return screen_width, screen_height
 
 

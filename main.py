@@ -1,3 +1,6 @@
+import pyglet.graphics
+import time
+
 import validation
 from game import *
 from pyglet.window import mouse
@@ -16,7 +19,7 @@ if __name__ == "__main__":
     board = Board(window)
     board_batch = pyglet.graphics.Batch()
     stone_batch = pyglet.graphics.Batch()
-    control_batch = pyglet.graphics.Batch()
+    dice_batch = pyglet.graphics.Batch()
 
     load_pngs()
 
@@ -32,6 +35,7 @@ if __name__ == "__main__":
         if board.state == State.WAIT_DICE:
             if position == 'dice':
                 board.current_dicevalue = random.randint(1,6)
+                board.roll_the_dice = True
                 print(f'you diced a {board.current_dicevalue}')
                 board.state = State.WAIT_MOVE
             else:
@@ -120,5 +124,9 @@ if __name__ == "__main__":
         stone_batch = pyglet.graphics.Batch()
         board.update_stone_batch(stone_batch)
         stone_batch.draw()
+        if board.roll_the_dice:
+            board.update_dice_batch(dice_batch)
+            dice_batch.draw()
+
 
     pyglet.app.run()
