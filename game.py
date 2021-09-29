@@ -1,5 +1,4 @@
 import random
-import time
 
 import pyglet
 
@@ -50,7 +49,7 @@ class Board:
     def init_field_map(self):
         field_map = {}
         for stone in self.stones:
-            #(stone.position)
+            # (stone.position)
             field_map[stone.position] = stone
         return field_map
 
@@ -59,6 +58,10 @@ class Board:
         for idx_h, idx_not in zip(IDX_HADAMARD, IDX_NOT):
             gate_map[idx_h] = HadamardGate(idx_h)
             gate_map[idx_not] = XGate(idx_not)
+        for idx_1, idx_2 in zip(IDX_PHASE_1, IDX_PHASE_2):
+            gate = PhaseShiftGate((idx_1, idx_2))
+            gate_map[idx_1] = gate
+            gate_map[idx_2] = gate
         return gate_map
 
     def update_stone_batch(self, batch):
@@ -89,7 +92,7 @@ class Board:
         self.draw_dice(self.current_dicevalue, batch)
 
     def update_dice_batch(self, batch):
-        i = random.randint(1,6)
+        i = random.randint(1, 6)
         self.draw_dice(i, batch)
         self.roll_the_dice = False
 
@@ -185,19 +188,16 @@ class Board:
         sprite.scale = height / img.height * 0.5
         self.sprites.append(sprite)
 
-
-
     def initialize_gamelog_batch(self, batch):
         img = textpngs['blue_turn']
         img.anchor_x = img.width // 2
         img.anchor_y = img.height // 2
         width, height = get_screensize()
         px = (max(width, height) - min(width, height)) // 2 + min(width, height)
-        py = height // (6/5)
+        py = height // (6 / 5)
         sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
         sprite.scale = height / img.height * 0.05
         self.textimage = sprite
-
 
     def update_gamelog_batch(self, batch):
         if self.current_player.color == Color.BLUE:
@@ -217,7 +217,6 @@ class Board:
         sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
         sprite.scale = height / img.height * 0.05
         self.textimage = sprite
-
 
     def initialize_players(self):
         player_1 = Player(Color.BLUE, "Player 1")
@@ -261,8 +260,38 @@ class Board:
         new_pos = start
         while self.is_occupied(new_pos) and new_pos < start + 4:
             new_pos += 1
+        print(f'moving thrown stone to {new_pos}')
         self.field_map[new_pos] = stone
         stone.move_to(new_pos)
+
+    def phase_shift(self):
+        print('performing phase shift operation')
+        new_field_map = {}
+        for i in self.field_map:
+            if i >= 40:
+                continue
+            new_position = (i + 10) % 40
+            print(f"shifting from {i} to {new_position}")
+            stone = self.field_map[i]
+            new_field_map[new_position] = stone
+            stone.move_to(new_position)
+        self.field_map = new_field_map
+
+    # note: this counts the number of *HALF* stones to account for entanglement
+    def count_stones_per_color(self):
+        count_map = {}
+        for (_, stone) in self.field_map.items():
+            if not stone.entangled:
+                if not stone.color in count_map:
+                    count_map[stone.color] = 0
+                count_map[stone.color] += 2
+            else:
+                color_1, color_2 = stone.get_colours()
+                for color in [color_1, color_2]:
+                    if not color in count_map:
+                        count_map[stone.color] = 0
+                    count_map[stone.color] += 1
+        return count_map
 
 
 class Player:
@@ -398,6 +427,7 @@ class XGate:
 
 class PhaseShiftGate:
     def __init__(self, position):
+        assert len(position) == 2
         self.position = position
         self.name = util.Gate.S
 

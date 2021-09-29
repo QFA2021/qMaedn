@@ -79,6 +79,14 @@ if __name__ == "__main__":
                     board.stone_to_be_unpaired = None
                     board.current_player = board.current_player.next
                     print(board.current_player.name)
+        elif board.state == State.WAIT_COLOR:
+            if position in board.field_map:
+                target_color = board.field_map[position].get_colour()
+                if target_color in board.allowed_colors:
+                    board.stone_to_be_paired.color = target_color
+                    board.stone_to_be_paired = None
+                    board.state = State.WAIT_DICE
+                    board.current_player = board.current_player.next
 
 
         elif position in board.field_map and board.state == State.WAIT_MOVE:
@@ -113,7 +121,7 @@ if __name__ == "__main__":
             move_valid = validation.validate(stone.position, new_position, board.current_dicevalue, stone.get_colour(),
                                              board)
             print(move_valid)
-            if move_valid:
+            if move_valid or not move_valid:
                 if board.is_occupied(new_position):
                     print(f'throwing stone at {new_position}')
                     board.throw_stone(new_position)
@@ -130,17 +138,72 @@ if __name__ == "__main__":
                         else:
                             board.state = State.WAIT_PAIR
                             board.stone_to_be_paired = stone
-
-
                     elif board.gate_map[new_position].name == Gate.X:
-                        board.stone_to_be_paired = stone
-                        board.state = State.WAIT_COLOR
+                        if not stone.entangled:
+                            color_frequency = board.count_stones_per_color()
+                            print(color_frequency)
+                            color_order = list(
+                                filter(
+                                    lambda x: x[0] != board.current_player.color,
+                                    sorted(
+                                        color_frequency.items(),
+                                        key=(lambda x: x[1])
+                                    )
+                                )
+                            )
+                            print(color_order)
+
+                            # all color have same number -> let the player choose
+                            if list(color_frequency.values()) == [8, 8, 8, 8]:
+                                print("Stone changing to any color because all have same count")
+                                board.state = State.WAIT_COLOR         
+                                board.stone_to_be_paired = stone
+
+                                board.allowed_colors = list(Color)
+                                board.allowed_colors.remove(board.current_player.color)
+                                print(board.allowed_colors)
+                            # there is one color with minimal count -> that is the target
+                            elif color_order[0][1] < color_order[1][1]:
+                                print('Stone changing to unambiguous minimal color')
+                                board.field_map[new_position].color = color_order[0][0]
+                                board.state = State.WAIT_DICE
+                                board.current_player = board.current_player.next
+                            # find the set of minimal colors -> let the player choose from those
+                            else:
+                                print("Stone changing to one of several minimal colors")
+                                _, minimal_count = color_order[0]
+                                minimal_colors = list(
+                                    map(
+                                        lambda x: x[0],
+                                        filter(
+                                            lambda y: y[1] == minimal_count,
+                                            color_order
+                                        )
+                                    )
+                                )
+                                print(minimal_colors)
+                                board.allowed_colors = minimal_colors
+                                board.state = State.WAIT_COLOR
+                                board.stone_to_be_paired = stone
+                        else: # stone is entangled
+                            board.state = State.WAIT_DICE
+                            board.current_player = board.current_player.next
+
+                            
+
+                        # board.state = State.WAIT_COLOR
+                        # board.field_map[new_position].color = Color.RED
+                    elif board.gate_map[new_position].name == Gate.S:
+                        idx_1, idx_2 =  board.gate_map[new_position].position
+                        if board.is_occupied(idx_1) and board.is_occupied(idx_2):
+                            board.phase_shift()
+                        board.state = State.WAIT_DICE
+                        board.current_player = board.current_player.next
                 else:
                     board.state = State.WAIT_DICE
                     if board.current_dicevalue != 6:
                         board.current_player = board.current_player.next
                     print(board.current_player.name)
-
 
     @window.event
     def on_draw():
