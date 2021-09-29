@@ -71,9 +71,9 @@ if __name__ == "__main__":
                 target_color = board.field_map[position].get_colour()
                 if target_color in board.allowed_colors:
                     board.stone_to_be_paired.color = target_color
-                board.stone_to_be_paired = None
-                board.state = State.WAIT_DICE
-                board.current_player = board.current_player.next
+                    board.stone_to_be_paired = None
+                    board.state = State.WAIT_DICE
+                    board.current_player = board.current_player.next
 
 
         elif position in board.field_map and board.state == State.WAIT_MOVE:
