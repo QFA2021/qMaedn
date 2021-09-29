@@ -18,6 +18,7 @@ class State(Enum):
     WAIT_COLOR = 2
     WAIT_PAIR = 3
     WAIT_COLLAPSE = 4
+    WAIT_MOVE = 5
 
 
 class Gate(Enum):
@@ -79,8 +80,8 @@ def grid2lin(x, y):
         quarter = 2
     elif y < 5 and x > 4:
         quarter = 3
-    elif x == 5 and y == 5:
-        return None
+    elif x == 5 and y == 5:                 # the center of the board where you can press the dice
+        return 'dice'
 
     x, y = rot90(x, y, (4 - quarter) % 4)
     print(f"q{quarter} {x}, {y}")

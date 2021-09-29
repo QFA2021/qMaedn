@@ -9,25 +9,6 @@ from util import State, get_screensize, Gate
 global board, window
 
 
-
-class Controls:
-    
-    def __init__(self, x, y):
-        self.shapes = []
-        self.x = x
-        self.y = y
-        self.diceval = 1
-
-    def throw_die(self):
-        self.diceval = random.randint(1,6)
-
-    def update_batch(self, batch):
-        label_text = f'Dice roll: {self.diceval}'
-        label = pyglet.text.Label(label_text, font_name='Arial', font_size=36, x=self.x, y=self.y,
-                                          color=(0, 0, 0, 255), anchor_x='center', anchor_y='center', batch=batch)
-        self.shapes.append(label)
-
-
 if __name__ == "__main__":
     screen_size = get_screensize()
     window = pyglet.window.Window(width=screen_size, height=screen_size, resizable=True)
@@ -41,14 +22,22 @@ if __name__ == "__main__":
 
     board.initialize_board_batch(board_batch)
     board.update_stone_batch(stone_batch)
-    
-    controls = Controls(window.width//2, 950)
 
 
     @window.event
     def on_mouse_press(x, y, button, modifiers):
         position = util.pix2lin(x, y, board.gridsize)
-        if position is None:
+        print(f'position: {position}')
+
+        if board.state == State.WAIT_DICE:
+            if position == 'dice':
+                board.current_dicevalue = random.randint(1,6)
+                print(f'you diced a {board.current_dicevalue}')
+                board.state = State.WAIT_MOVE
+            else:
+                return
+
+        elif position is None or position == 'dice':
             return
         if board.state == State.WAIT_PAIR:
             # if the selected position corresponds to a stone and the stone has
@@ -76,7 +65,8 @@ if __name__ == "__main__":
                     board.current_player = board.current_player.next
                     print(board.current_player.name)
 
-        elif position in board.field_map:
+
+        elif position in board.field_map and board.state == State.WAIT_MOVE:
             stone = board.field_map[position]
             board.stone_on_the_move = stone
 
@@ -86,10 +76,10 @@ if __name__ == "__main__":
         if board.stone_on_the_move is not None:
             stone = board.stone_on_the_move
             new_position = util.pix2lin(x, y, board.gridsize)
-            if not new_position:
+            if not new_position or new_position == 'dice':
                 return
             print(new_position)
-            move_valid = validation.validate(stone.position, new_position, 6, stone.get_colour(), board)
+            move_valid = validation.validate(stone.position, new_position, board.current_dicevalue, stone.get_colour(), board)
             print(move_valid)
             if move_valid or not move_valid:
                 if board.is_occupied(new_position):
@@ -127,7 +117,5 @@ if __name__ == "__main__":
         stone_batch = pyglet.graphics.Batch()
         board.update_stone_batch(stone_batch)
         stone_batch.draw()
-        controls.update_batch(control_batch)
-        control_batch.draw()
 
     pyglet.app.run()
