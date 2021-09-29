@@ -1,15 +1,14 @@
-from enum import Enum
-from imageload import stonepngs, fieldpngs
-
 import pyglet
 
 import util
+from imageload import stonepngs, fieldpngs
 from util import Color
+from util import get_screensize
 
 IDX_HADAMARD = [4, 14, 24, 34]
 IDX_NOT = [9, 19, 29, 39]
 IDX_PHASE_1 = [36, 26, 16, 6]
-IDX_PHASE_2 = [2, 12, 22, 32]
+IDX_PHASE_2 = [2, 32, 22, 12]
 DELTA_PHASE = {2: (1, 0), 12: (0, -1), 22: (-1, 0), 32: (0, 1)}
 
 
@@ -22,12 +21,24 @@ class Board:
                 The pyglet window where the game is displayed
         """
         self.shapes = []
-        self.window = window
-        self.gridsize = min(*window.get_size()) // 12
-        self.stones = self.__initialize_stones()
-        self.field_map = self.init_field_map()
         self.sprites = []
+
+        self.window = window
+        self.screensize = get_screensize()
+        self.gridsize = min(*window.get_size()) // 13  # 12 to cover the whole window
+
+        self.stones = self.initialize_stones()
+        self.field_map = self.init_field_map()
+        self.gate_map = self.init_gate_map()
+
+        self.current_player = None
+        self.players = self.initialize_players()
+
+        self.state = util.State.START
+
         self.stone_on_the_move = None
+        self.stone_to_be_paired = None
+        self.stone_to_be_unpaired = None
 
     def init_field_map(self):
         field_map = {}
@@ -35,6 +46,13 @@ class Board:
             print(stone.position)
             field_map[stone.position] = stone
         return field_map
+
+    def init_gate_map(self):
+        gate_map = {}
+        for idx_h, idx_not in zip(IDX_HADAMARD, IDX_NOT):
+            gate_map[idx_h] = HadamardGate(idx_h)
+            gate_map[idx_not] = XGate(idx_not)
+        return gate_map
 
     def update_stone_batch(self, batch):
         """
@@ -55,14 +73,13 @@ class Board:
             img.anchor_x = img.height // 2
             img.anchor_y = img.height // 2
 
-            gx, gy = util.lin2grid(stone.position)
-            px, py = gx * self.gridsize + self.gridsize // 2, gy * self.gridsize + self.gridsize // 2
+            px, py = util.lin2pix(stone.position, self.gridsize)
 
             sprite = pyglet.sprite.Sprite(img, px, py, batch=batch)
-            sprite.scale = 0.5
+            sprite.scale = 0.5 * self.screensize / 1000
             self.sprites.append(sprite)
 
-    def __initialize_stones(self):
+    def initialize_stones(self):
         """
         Called when the board is created to put the stones into their starting positions.
         :return:
@@ -87,57 +104,70 @@ class Board:
                 The pyglet batch which is used for the board.
         :return:
         """
-        self.shapes = []
+
         background = pyglet.graphics.OrderedGroup(0)
         middleground = pyglet.graphics.OrderedGroup(1)
         foreground = pyglet.graphics.OrderedGroup(2)
-        color = (0, 0, 0)
-        size = self.gridsize // 2 - 4
-        width = 3
-        for i in range(72):
-            gx, gy = util.lin2grid(i)
-            px, py = gx * self.gridsize + self.gridsize // 2, gy * self.gridsize + self.gridsize // 2
-            color = util.get_color(i)
 
-            if i in IDX_HADAMARD:
-                label_text = 'H'
-                label_size = 36
-            elif i in IDX_NOT:
-                label_text = 'X'
-                label_size = 36
-            elif i in IDX_PHASE_1:
-                pass
-            else:
-                label_text = str(i)
-                label_size = 12
+        # places all 72 fields on the according position on the board
+        for position in range(72):
+            gatename = 'standart'
+            if position in IDX_HADAMARD:
+                gatename = 'hadamard'
+            elif position in IDX_NOT:
+                gatename = 'not'
+            elif position in (10, 44, 45, 46, 47, 60, 61, 62, 63):  # all blue fields
+                gatename = 'bluefield'
+            elif position in (20, 48, 49, 50, 51, 64, 65, 66, 67):  # all green fields
+                gatename = 'greenfield'
+            elif position in (30, 52, 53, 54, 55, 68, 69, 70, 71):  # all yellow fields
+                gatename = 'yellowfield'
+            elif position in (0, 40, 41, 42, 43, 56, 57, 58, 59):  # all red fields
+                gatename = 'redfield'
+            elif position in IDX_PHASE_2:
+                orientation = {'2': 'l', '12': 't', '22': 'r', '32': 'b'}
+                gatename = 'phase_' + orientation[str(position)]
+            elif position in IDX_PHASE_1:
+                gatename = 'phase_control'
+            img = fieldpngs[gatename]
+            img.anchor_x = img.height // 2
+            img.anchor_y = img.height // 2
 
-            outer_circle = pyglet.shapes.Circle(px, py, size, color=color, batch=batch, group=background)
-            inner_circle = pyglet.shapes.Circle(px, py, size - width, color=(255, 255, 255), batch=batch,
-                                                group=middleground)
-            if i in IDX_PHASE_1:
-                label = pyglet.shapes.Circle(px, py, 10, color=(0, 0, 0), batch=batch, group=foreground)
-            elif i in IDX_PHASE_2:
-                label = pyglet.text.Label("S", font_name='Arial', font_size=36, x=px, y=py, color=(0, 0, 0, 255),
-                                          anchor_x='center', anchor_y='center', batch=batch, group=foreground)
-                dx, dy = DELTA_PHASE[i]
-                from_x = px + dx * size
-                from_y = py + dy * size
-                to_x = px + dx * self.gridsize * 2
-                to_y = py + dy * self.gridsize * 2
-                connector = pyglet.shapes.Line(from_x, from_y, to_x, to_y, width=3, color=(0, 0, 0), batch=batch,
-                                               group=foreground)
-                self.shapes.append(connector)
-            else:
-                label = pyglet.text.Label(label_text, font_name='Arial', font_size=label_size, x=px, y=py,
-                                          color=(0, 0, 0, 255), anchor_x='center', anchor_y='center', batch=batch,
-                                          group=foreground)
+            px, py = util.lin2pix(position, self.gridsize)
 
-            self.shapes.append(outer_circle)
-            self.shapes.append(inner_circle)
-            self.shapes.append(label)
+            sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=foreground)
+            sprite.scale = 0.45 * self.screensize / 1000
+            self.sprites.append(sprite)
+
+            # label = pyglet.text.Label(str(position), font_name='Arial', font_size=12, x=px, y=py,
+            #         color=(0, 0, 0, 255), anchor_x='center', anchor_y='center', batch=batch, group=foreground)
+
+        # creating the connection lines between the phaseshift gates
+        for i, j in zip(IDX_PHASE_1, IDX_PHASE_2):
+            from_x, from_y = util.lin2pix(i, self.gridsize)
+            to_x, to_y = util.lin2pix(j, self.gridsize)
+            connector = pyglet.shapes.Line(from_x, from_y, to_x, to_y, width=5, color=(0, 0, 0), batch=batch,
+                                           group=middleground)
+            self.shapes.append(connector)
+
+        # creating the background board
+        img = fieldpngs['board']
+        sprite = pyglet.sprite.Sprite(img, 0, 0, batch=batch, group=background)
+        sprite.scale = 1 / 650 * self.screensize * 0.92
+        self.sprites.append(sprite)
 
     def initialize_players(self):
-        pass
+        player_1 = Player(Color.BLUE, "Player 1")
+        player_2 = Player(Color.GREEN, "Player 2")
+        player_3 = Player(Color.YELLOW, "Player 3")
+        player_4 = Player(Color.RED, "Player 4")
+
+        player_1.next = player_2
+        player_2.next = player_3
+        player_3.next = player_4
+        player_4.next = player_1
+        self.current_player = player_1
+        return [player_1, player_2, player_3, player_4]
 
     def is_occupied(self, i, color=None):
         if i not in self.field_map:
@@ -147,11 +177,23 @@ class Board:
         else:
             return True
 
+    def throw_stone(self, i):
+        # TODO implement throwing of entangled stones
+        stone = self.field_map.pop(i)
+        start, _ = util.start_coordinates[stone.get_colour()]
+        new_pos = start
+        while self.is_occupied(new_pos) and new_pos < start + 4:
+            new_pos += 1
+        self.field_map[new_pos] = stone
+        stone.move_to(new_pos)
+
+
 class Player:
     """
     colour: The colour that the player is represented by
     name: The name of the player
     """
+
     def __init__(self, color: Color, name):
         """
 
@@ -162,22 +204,7 @@ class Player:
         """
         self.name = name
         self.color = color
-        self.stones = []
-
-    def set_stones(self, stones):
-        """
-
-        :param stones:
-
-        :return:
-        """
-        self.stones = stones
-
-    def add_stone(self, stone):
-        self.stones.append(stone)
-
-    def remove_stone(self, stone):
-        self.stones.remove(stone)
+        self.next = None
 
 
 class Stone:
@@ -190,7 +217,7 @@ class Stone:
         :param position:int
                 The index of the field which encodes the position of the stone on the board.
         """
-        self.__color__ = color
+        self.color = color
         self.entangled = False
         self.position = position
         self.other = None
@@ -200,38 +227,38 @@ class Stone:
         Only used for entangled stones. Returns both colors of the entangled stone.
         """
         if self.entangled:
-            return self.__color__, self.other.get_colour()
+            return self.color, self.other.get_colour()
         else:
-            return (self.__color__,)
-        raise ValueError("The stone is not entangled and has no multiple colors.")
+            return (self.color,)
 
     def get_colour(self):
         """
         Only used for not entangled stones. Returns the color of the stone.
         """
-        return self.__color__
+        return self.color
 
-    def entangle(self, other):
+    def entangle(self, otherStone):
         """
         Entangles the stone itself with another stone on the board.
-        :param other:Stone
+        :param otherStone:Stone
                 The other stone with which the entanglement takes place.
         :return:
         """
-        self.other = other
+        self.other = otherStone
         self.entangled = True
-        other.entangled = True
-        other.other = self
+        otherStone.entangled = True
+        otherStone.other = self
 
-    def disentangle(self):
+    def disentangle(self, col1, col2):
         """
-        Only used for already entangled stones. Disentangles the stone and it's entangled partner.
-        :return:
+        Only used for already entangled stones. Disentangles the stone and its entangled partner.
         """
         self.entangled = False
-        self.other = None
         self.other.entangled = False
         self.other.other = None
+        self.color = col1
+        self.other.color = col2
+        self.other = None
 
     def draw(self, batch):
         pass
@@ -254,6 +281,7 @@ class HadamardGate:
         :param position:int
                 The index of the field where this special gate is located.
         """
+        self.name = util.Gate.H
         self.position = position
 
     @staticmethod
@@ -265,13 +293,13 @@ class HadamardGate:
         :param stone2:
         :return:
         """
-        stone1.entangled = True
-        stone2.entangled = True
+        stone1.entangle(stone2)
 
 
 class XGate:
     def __init__(self, position):
         self.position = position
+        self.name = util.Gate.X
 
     @staticmethod
     def apply(self, stone: Stone, color: Color):
@@ -281,6 +309,7 @@ class XGate:
 class PhaseShiftGate:
     def __init__(self, position):
         self.position = position
+        self.name = util.Gate.S
 
     @staticmethod
     def apply():

@@ -17,22 +17,10 @@ def validate(x,y,a,color, board): #x Ursprungsfeld, y Zielfeld, a Augenzahl, pla
     3)The player chooses the position y he wants to move the selected piece to
     4)Validation checks wether the player's choice of (x,y,a) yields an allowed move
     """
-    house = {
-        util.Color.RED: (39, 40),
-        util.Color.BLUE: (9, 44),
-        util.Color.GREEN: (19, 48), 
-        util.Color.YELLOW: (29, 52),
-    }
+    
 
-    start = {
-        util.Color.RED: (56, 0),
-        util.Color.BLUE: (60, 10),
-        util.Color.GREEN: (64, 20), 
-        util.Color.YELLOW: (68, 30),
-    }
-
-    house_entry, house_first = house[color]
-    start_first, start_field = start[color]
+    house_entry, house_first = util.house_coordinates[color]
+    start_first, start_field = util.start_coordinates[color]
 
     if x >= house_first and x < house_first+4: # player is already in their house
         if x+a != y or y >= house_first+4:

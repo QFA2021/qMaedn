@@ -11,25 +11,58 @@ class Color(Enum):
     YELLOW = "yellow"
     RED = "red"
 
+
+class State(Enum):
+    START = 0
+    WAIT_DICE = 1
+    WAIT_COLOR = 2
+    WAIT_PAIR = 3
+    WAIT_COLLAPSE = 4
+
+
+class Gate(Enum):
+    """
+    Set of 3 quantum gates.
+    """
+    H = "H"
+    S = "S"
+    X = "X"
+
+
+house_coordinates = {
+    Color.RED: (39, 40),
+    Color.BLUE: (9, 44),
+    Color.GREEN: (19, 48),
+    Color.YELLOW: (29, 52),
+}
+
+start_coordinates = {
+    Color.RED: (56, 0),
+    Color.BLUE: (60, 10),
+    Color.GREEN: (64, 20),
+    Color.YELLOW: (68, 30),
+}
+
 DOTS_PER_Q = 10
+
 
 def lin2grid(i):
     if i < 40:  # regular playing field
-        quarter = i // DOTS_PER_Q
+        quarter = int(i // DOTS_PER_Q)
         i = i % DOTS_PER_Q
         y = max(i - 4, min(4, i))
         x = max(0, min(4, 4 - i + 4))
         return rot90(x, y, quarter)
     elif i < 56:  # houses
         i = i % 40
-        quarter = i // 4
+        quarter = int(i // 4)
         i = i % 4  # 40 normal fields plus 4 per house
         x = 5
         y = 1 + i
         return rot90(x, y, quarter)
     elif i < 72:
         i = i % 56
-        quarter = i // 4
+        quarter = int(i // 4)
         i = i % 4
         x = i % 2
         y = 1 - i // 2
@@ -72,16 +105,24 @@ def grid2lin(x, y):
             return None
         return i + 10 * quarter
 
+
+# shift only works on nicos laptop
+# TODO fix the visuals for all users
+
 def pix2lin(x, y, gridsize):
-    gx = x // gridsize
-    gy = y // gridsize
+    shift = get_screensize() // 24.7
+    gx = (x - shift) // gridsize
+    gy = (y - shift) // gridsize
     return grid2lin(gx, gy)
 
+
 def lin2pix(i, gridsize):
+    shift = get_screensize() // 24.7
     gx, gy = lin2grid(i)
-    px = gx * gridsize + gridsize //2
-    py = gy * gridsize + gridsize //2
+    px = gx * gridsize + gridsize // 2 + shift
+    py = gy * gridsize + gridsize // 2 + shift
     return px, py
+
 
 def rot90(x, y, times):
     x = x - 5
@@ -91,25 +132,25 @@ def rot90(x, y, times):
     return x + 5, y + 5
 
 
-
 def get_color(x):
-  RED = (255, 0, 0)
-  GREEN = (0, 255, 0)
-  BLUE = (0, 0, 255)
-  YELLOW = (255, 255, 0)
-  DEFAULT = (0, 0, 0)
-  if x == 0 or (x >= 40 and x < 44) or (x >= 56 and x < 60): 
-    return RED
-  elif x == 10 or (x >= 44 and x < 48) or (x >= 60 and x < 64): 
-    return BLUE
-  elif x == 20 or (x >= 48 and x < 52) or (x >= 64 and x < 68): 
-    return GREEN
-  elif x == 30 or (x >= 52 and x < 56) or (x >= 68 and x < 72): 
-    return YELLOW
-  else:
-    return DEFAULT
+    RED = (255, 0, 0)
+    GREEN = (0, 255, 0)
+    BLUE = (0, 0, 255)
+    YELLOW = (255, 255, 0)
+    DEFAULT = (0, 0, 0)
+    if x == 0 or (x >= 40 and x < 44) or (x >= 56 and x < 60):
+        return RED
+    elif x == 10 or (x >= 44 and x < 48) or (x >= 60 and x < 64):
+        return BLUE
+    elif x == 20 or (x >= 48 and x < 52) or (x >= 64 and x < 68):
+        return GREEN
+    elif x == 30 or (x >= 52 and x < 56) or (x >= 68 and x < 72):
+        return YELLOW
+    else:
+        return DEFAULT
 
-  #if x == 10 or (x >= 
+    # if x == 10 or (x >=
+
 
 def test_consistency():
     for i in range(0, 72):
@@ -118,6 +159,17 @@ def test_consistency():
         i2 = grid2lin(x, y)
         print(f"({x}, {y}) i: {i}, i2: {i2}")
         assert i == i2
+
+
+def get_screensize():
+    """
+    Returns the smallest sidelength of the window when displayed on fullscreen.
+    """
+    display = pyglet.canvas.Display()
+    screen = display.get_default_screen()
+    screen_width, screen_height = screen.width, screen.height
+    screen_size = min(screen_height, screen_width)
+    return screen_size
 
 
 if __name__ == "__main__":
