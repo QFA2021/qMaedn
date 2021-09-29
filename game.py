@@ -25,7 +25,7 @@ class Board:
         self.diceimage = None
 
         self.window = window
-        self.screensize = get_screensize()
+        self.screensize = min(get_screensize())        # takes the min of height and width of the screen
         self.gridsize = min(*window.get_size()) // 13  # 12 to cover the whole window
 
         self.stones = self.initialize_stones()
