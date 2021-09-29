@@ -25,7 +25,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
      inkscape:cx="321.6722"
-     inkscape:cy="420.49706"
+     inkscape:cy="677.63992"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -58,8 +58,8 @@
        y="69.16964"
        id="text1421"
        inkscape:export-filename="C:\AAA-Data\Stipendium\Ferienakademie\QuantumMADN\qMaedn\resources\pngs\blue_turn.png"
-       inkscape:export-xdpi="159.15434"
-       inkscape:export-ydpi="159.15434"><tspan
+       inkscape:export-xdpi="154.86845"
+       inkscape:export-ydpi="154.86845"><tspan
          sodipodi:role="line"
          id="tspan1419"
          x="38.742554"
@@ -74,8 +74,8 @@
        y="89.391365"
        id="text1433"
        inkscape:export-filename="C:\AAA-Data\Stipendium\Ferienakademie\QuantumMADN\qMaedn\resources\pngs\red_turn.png"
-       inkscape:export-xdpi="159.15434"
-       inkscape:export-ydpi="159.15434"><tspan
+       inkscape:export-xdpi="154.86839"
+       inkscape:export-ydpi="154.86839"><tspan
          sodipodi:role="line"
          id="tspan1431"
          x="40.632435"
@@ -90,8 +90,8 @@
        y="115.28274"
        id="text1439"
        inkscape:export-filename="C:\AAA-Data\Stipendium\Ferienakademie\QuantumMADN\qMaedn\resources\pngs\green_turn.png"
-       inkscape:export-xdpi="159.15421"
-       inkscape:export-ydpi="159.15421"><tspan
+       inkscape:export-xdpi="154.875"
+       inkscape:export-ydpi="154.875"><tspan
          sodipodi:role="line"
          id="tspan1437"
          x="39.876484"
@@ -106,8 +106,8 @@
        y="143.06398"
        id="text1445"
        inkscape:export-filename="C:\AAA-Data\Stipendium\Ferienakademie\QuantumMADN\qMaedn\resources\pngs\yellow_turn.png"
-       inkscape:export-xdpi="159.15434"
-       inkscape:export-ydpi="159.15434"><tspan
+       inkscape:export-xdpi="154.86839"
+       inkscape:export-ydpi="154.86839"><tspan
          sodipodi:role="line"
          id="tspan1443"
          x="40.632435"
@@ -115,5 +115,38 @@
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT';stroke-width:0.265;stroke:#000000;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"><tspan
    style="fill:#ffff00;stroke:#000000;stroke-opacity:1;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none"
    id="tspan1441">Yellow player:</tspan> it's your turn!</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10.5833px;line-height:0;font-family:sans-serif;stroke-width:0.264583"
+       x="42.900295"
+       y="173.86905"
+       id="text1455"><tspan
+         sodipodi:role="line"
+         id="tspan1453"
+         x="42.900295"
+         y="173.86905"
+         style="stroke-width:0.264583">Roll the dice.</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10.5833px;line-height:0;font-family:sans-serif;stroke-width:0.264583"
+       x="41.577381"
+       y="185.96428"
+       id="text1459"><tspan
+         sodipodi:role="line"
+         id="tspan1457"
+         x="41.577381"
+         y="185.96428"
+         style="stroke-width:0.264583">Entangle your stone.</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10.5833px;line-height:0;font-family:sans-serif;stroke-width:0.264583"
+       x="44.034225"
+       y="204.6741"
+       id="text1463"><tspan
+         sodipodi:role="line"
+         id="tspan1461"
+         x="44.034225"
+         y="204.6741"
+         style="stroke-width:0.264583">Collapse your entangled stone.</tspan></text>
   </g>
 </svg>
