@@ -43,7 +43,7 @@ if __name__ == "__main__":
             # if the selected position corresponds to a stone and the stone has
             # a different color and the stone is not already entangled, then entangle
             if position in board.field_map and (not board.field_map[position].entangled) and board.field_map[
-                position].get_colour() is not board.current_player:
+                position].get_colour() is not board.current_player.color:
                 board.field_map[position].entangle(board.stone_to_be_paired)
                 board.state = State.WAIT_DICE
                 board.current_player = board.current_player.next
@@ -108,7 +108,8 @@ if __name__ == "__main__":
                         board.state = State.WAIT_COLOR
                 else:
                     board.state = State.WAIT_DICE
-                    board.current_player = board.current_player.next
+                    if board.current_dicevalue != 6:
+                        board.current_player = board.current_player.next
                     print(board.current_player.name)
 
 
