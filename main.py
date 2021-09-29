@@ -8,7 +8,6 @@ from util import State, get_screensize, Gate
 
 global board, window
 
-
 if __name__ == "__main__":
     width, height = get_screensize()
     window = pyglet.window.Window(width=width, height=height, resizable=True)
@@ -31,8 +30,20 @@ if __name__ == "__main__":
 
         if board.state == State.WAIT_DICE:
             if position == 'dice':
-                board.current_dicevalue = random.randint(1,6)
+                #TODO when the current player's stones are all at house or at the end,
+                # the player can dice 3 times till a 6 comes
+                board.current_dicevalue = random.randint(1, 6)
                 print(f'you diced a {board.current_dicevalue}')
+                board.current_player.max_no_of_dices -=1
+
+                if board.current_dicevalue != 6 and can_dice_again():
+                    if board.current_player.max_no_of_dices != 0:
+                        return
+                    else:
+                        board.current_player.max_no_of_dices = 3
+                        board.current_player = board.current_player.next
+                        return
+                board.current_player.max_no_of_dices = 3
                 board.state = State.WAIT_MOVE
             else:
                 return
@@ -51,7 +62,8 @@ if __name__ == "__main__":
 
         elif board.state == State.WAIT_COLLAPSE:
             if position in board.field_map:
-                if board.field_map[position] == board.stone_to_be_unpaired.other or board.field_map[position] == board.stone_to_be_unpaired:
+                if board.field_map[position] == board.stone_to_be_unpaired.other or board.field_map[
+                    position] == board.stone_to_be_unpaired:
                     c1, c2 = board.field_map[position].get_colours()
                     if c1 == board.current_player.color:
                         other_color = c2
@@ -71,6 +83,18 @@ if __name__ == "__main__":
             else:
                 board.stone_on_the_move = stone
 
+    def can_dice_again():
+        player_stones = []
+        for v in board.field_map.values():
+            if v.color == board.current_player.color:
+                player_stones.append(v)
+
+        dice_again = True
+        for s in player_stones:
+            if not s.is_inhouse() and not s.is_done(board):
+                dice_again = False
+        print(board.current_player.name, " can dice again: ", dice_again)
+        return dice_again
 
     @window.event
     def on_mouse_release(x, y, button, modifiers):
@@ -81,7 +105,8 @@ if __name__ == "__main__":
             if new_position is None or new_position == 'dice':
                 return
             print("New position: ", new_position)
-            move_valid = validation.validate(stone.position, new_position, board.current_dicevalue, stone.get_colour(), board)
+            move_valid = validation.validate(stone.position, new_position, board.current_dicevalue, stone.get_colour(),
+                                             board)
             print(move_valid)
             if move_valid:
                 if board.is_occupied(new_position):
@@ -91,7 +116,6 @@ if __name__ == "__main__":
                 board.field_map[new_position] = stone
                 stone.move_to(new_position)
                 board.stone_on_the_move = None
-
 
                 if new_position in board.gate_map:
                     if board.gate_map[new_position].name == Gate.H:
@@ -120,5 +144,6 @@ if __name__ == "__main__":
         stone_batch = pyglet.graphics.Batch()
         board.update_stone_batch(stone_batch)
         stone_batch.draw()
+
 
     pyglet.app.run()

@@ -25,7 +25,7 @@ class Board:
         self.diceimage = None
 
         self.window = window
-        self.screensize = min(get_screensize())        # takes the min of height and width of the screen
+        self.screensize = min(get_screensize())  # takes the min of height and width of the screen
         self.gridsize = min(*window.get_size()) // 13  # 12 to cover the whole window
 
         self.stones = self.initialize_stones()
@@ -36,7 +36,7 @@ class Board:
         self.current_dicevalue = 1
         self.players = self.initialize_players()
 
-        self.state = util.State.WAIT_DICE           #util.State.START
+        self.state = util.State.WAIT_DICE  # util.State.START
 
         self.stone_on_the_move = None
         self.stone_to_be_paired = None
@@ -143,8 +143,9 @@ class Board:
             sprite.scale = 0.45 * self.screensize / 1000
             self.sprites.append(sprite)
 
-            # label = pyglet.text.Label(str(position), font_name='Arial', font_size=12, x=px, y=py,
-            #         color=(0, 0, 0, 255), anchor_x='center', anchor_y='center', batch=batch, group=foreground)
+            label = pyglet.text.Label(str(position), font_name='Arial', font_size=12, x=px, y=py,
+                                      color=(0, 0, 0, 255), anchor_x='center', anchor_y='center', batch=batch,
+                                      group=foreground)
 
         # creating the connection lines between the phaseshift gates
         for i, j in zip(IDX_PHASE_1, IDX_PHASE_2):
@@ -163,17 +164,16 @@ class Board:
         # creating the dice
         self.draw_dice(1, batch)
 
-        #creating the logo
+        # creating the logo
         img = fieldpngs['logo']
         img.anchor_x = img.height // 2
         img.anchor_y = img.height // 2
         width, height = get_screensize()
-        px = (max(width, height) - min(width, height))//2 + min(width, height)
+        px = (max(width, height) - min(width, height)) // 2 + min(width, height)
         py = height // 3
         sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=foreground)
         sprite.scale = height / img.height * 0.5
         self.sprites.append(sprite)
-
 
     def initialize_players(self):
         player_1 = Player(Color.BLUE, "Player 1")
@@ -201,7 +201,6 @@ class Board:
         sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
         sprite.scale = 0.45 * self.screensize / 1000
         self.diceimage = sprite
-
 
     def is_occupied(self, i, color=None):
         if i not in self.field_map:
@@ -239,6 +238,7 @@ class Player:
         self.name = name
         self.color = color
         self.next = None
+        self.max_no_of_dices = 3
 
 
 class Stone:
@@ -299,13 +299,25 @@ class Stone:
 
     def move_to(self, position):
         """
-        Moves a stone from it's current position to a new position.
+        Moves a stone from its current position to a new position.
         :param position:int
                 The index of the field where the stone is supposed to move to.
-        :return:
         """
-        # TODO: The validator validates here?
         self.position = position
+
+    def is_inhouse(self):
+        return self.position in range(util.start_coordinates[self.color][0], util.start_coordinates[self.color][0] + 4)
+
+    def is_done(self, board):
+        return self.position in range(util.house_coordinates[self.color][1],
+                                      util.house_coordinates[self.color][1] + 4) and not self.can_move_in_end_house(
+            board)
+
+    def can_move_in_end_house(self, board):
+        for i in range(self.position + 1, util.house_coordinates[self.color][1] + 4):
+            if i not in board.field_map:
+                return False
+        return True
 
 
 class HadamardGate:
