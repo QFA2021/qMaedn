@@ -66,7 +66,10 @@ if __name__ == "__main__":
 
         elif position in board.field_map and board.state == State.WAIT_MOVE:
             stone = board.field_map[position]
-            board.stone_on_the_move = stone
+            if board.current_player.color not in stone.get_colours():
+                return
+            else:
+                board.stone_on_the_move = stone
 
 
     @window.event
