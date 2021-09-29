@@ -1,3 +1,6 @@
+import pyglet.graphics
+import time
+
 import validation
 from game import *
 from pyglet.window import mouse
@@ -13,13 +16,16 @@ if __name__ == "__main__":
     window = pyglet.window.Window(width=width, height=height, resizable=True)
     pyglet.gl.glClearColor(255, 255, 255, 1.0)
     board = Board(window)
+
     board_batch = pyglet.graphics.Batch()
     stone_batch = pyglet.graphics.Batch()
-    control_batch = pyglet.graphics.Batch()
+    dice_batch = pyglet.graphics.Batch()
+    gamelog_batch = pyglet.graphics.Batch()
 
     load_pngs()
 
     board.initialize_board_batch(board_batch)
+    board.initialize_gamelog_batch(gamelog_batch)
     board.update_stone_batch(stone_batch)
 
 
@@ -30,9 +36,8 @@ if __name__ == "__main__":
 
         if board.state == State.WAIT_DICE:
             if position == 'dice':
-                #TODO when the current player's stones are all at house or at the end,
-                # the player can dice 3 times till a 6 comes
-                board.current_dicevalue = random.randint(1, 6)
+                board.current_dicevalue = random.randint(1,6)
+                board.roll_the_dice = True
                 print(f'you diced a {board.current_dicevalue}')
                 board.current_player.max_no_of_dices -=1
 
@@ -141,9 +146,15 @@ if __name__ == "__main__":
     def on_draw():
         window.clear()
         board_batch.draw()
+        board.update_gamelog_batch(gamelog_batch)
+        gamelog_batch.draw()
         stone_batch = pyglet.graphics.Batch()
         board.update_stone_batch(stone_batch)
         stone_batch.draw()
+
+        if board.roll_the_dice:
+            board.update_dice_batch(dice_batch)
+            dice_batch.draw()
 
 
     pyglet.app.run()

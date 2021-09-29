@@ -1,7 +1,10 @@
+import random
+import time
+
 import pyglet
 
 import util
-from imageload import stonepngs, fieldpngs, dicepngs
+from imageload import stonepngs, fieldpngs, dicepngs, textpngs
 from util import Color
 from util import get_screensize
 
@@ -22,7 +25,9 @@ class Board:
         """
         self.shapes = []
         self.sprites = []
+        self.textimage = None
         self.diceimage = None
+        self.roll_the_dice = False
 
         self.window = window
         self.screensize = min(get_screensize())  # takes the min of height and width of the screen
@@ -36,7 +41,7 @@ class Board:
         self.current_dicevalue = 1
         self.players = self.initialize_players()
 
-        self.state = util.State.WAIT_DICE  # util.State.START
+        self.state = util.State.WAIT_DICE
 
         self.stone_on_the_move = None
         self.stone_to_be_paired = None
@@ -45,7 +50,7 @@ class Board:
     def init_field_map(self):
         field_map = {}
         for stone in self.stones:
-            print(stone.position)
+            #(stone.position)
             field_map[stone.position] = stone
         return field_map
 
@@ -82,6 +87,11 @@ class Board:
             self.sprites.append(sprite)
 
         self.draw_dice(self.current_dicevalue, batch)
+
+    def update_dice_batch(self, batch):
+        i = random.randint(1,6)
+        self.draw_dice(i, batch)
+        self.roll_the_dice = False
 
     def initialize_stones(self):
         """
@@ -166,7 +176,7 @@ class Board:
 
         # creating the logo
         img = fieldpngs['logo']
-        img.anchor_x = img.height // 2
+        img.anchor_x = img.width // 2
         img.anchor_y = img.height // 2
         width, height = get_screensize()
         px = (max(width, height) - min(width, height)) // 2 + min(width, height)
@@ -174,6 +184,40 @@ class Board:
         sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=foreground)
         sprite.scale = height / img.height * 0.5
         self.sprites.append(sprite)
+
+
+
+    def initialize_gamelog_batch(self, batch):
+        img = textpngs['blue_turn']
+        img.anchor_x = img.width // 2
+        img.anchor_y = img.height // 2
+        width, height = get_screensize()
+        px = (max(width, height) - min(width, height)) // 2 + min(width, height)
+        py = height // (6/5)
+        sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
+        sprite.scale = height / img.height * 0.05
+        self.textimage = sprite
+
+
+    def update_gamelog_batch(self, batch):
+        if self.current_player.color == Color.BLUE:
+            turn = 'blue_turn'
+        elif self.current_player.color == Color.RED:
+            turn = 'red_turn'
+        elif self.current_player.color == Color.GREEN:
+            turn = 'green_turn'
+        elif self.current_player.color == Color.YELLOW:
+            turn = 'yellow_turn'
+        img = textpngs[turn]
+        img.anchor_x = img.width // 2
+        img.anchor_y = img.height // 2
+        width, height = get_screensize()
+        px = (max(width, height) - min(width, height)) // 2 + min(width, height)
+        py = height // (6 / 5)
+        sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
+        sprite.scale = height / img.height * 0.05
+        self.textimage = sprite
+
 
     def initialize_players(self):
         player_1 = Player(Color.BLUE, "Player 1")
