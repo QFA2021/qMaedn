@@ -1,3 +1,6 @@
+import pyglet.graphics
+import time
+
 import validation
 from game import *
 from pyglet.window import mouse
@@ -16,7 +19,7 @@ if __name__ == "__main__":
     board = Board(window)
     board_batch = pyglet.graphics.Batch()
     stone_batch = pyglet.graphics.Batch()
-    control_batch = pyglet.graphics.Batch()
+    dice_batch = pyglet.graphics.Batch()
 
     load_pngs()
 
@@ -32,6 +35,7 @@ if __name__ == "__main__":
         if board.state == State.WAIT_DICE:
             if position == 'dice':
                 board.current_dicevalue = random.randint(1,6)
+                board.roll_the_dice = True
                 print(f'you diced a {board.current_dicevalue}')
                 board.state = State.WAIT_MOVE
             else:
@@ -43,7 +47,7 @@ if __name__ == "__main__":
             # if the selected position corresponds to a stone and the stone has
             # a different color and the stone is not already entangled, then entangle
             if position in board.field_map and (not board.field_map[position].entangled) and board.field_map[
-                position].get_colour() is not board.current_player:
+                position].get_colour() is not board.current_player.color:
                 board.field_map[position].entangle(board.stone_to_be_paired)
                 board.state = State.WAIT_DICE
                 board.current_player = board.current_player.next
@@ -166,7 +170,8 @@ if __name__ == "__main__":
                         board.current_player = board.current_player.next
                 else:
                     board.state = State.WAIT_DICE
-                    board.current_player = board.current_player.next
+                    if board.current_dicevalue != 6:
+                        board.current_player = board.current_player.next
                     print(board.current_player.name)
 
     @window.event
@@ -176,5 +181,9 @@ if __name__ == "__main__":
         stone_batch = pyglet.graphics.Batch()
         board.update_stone_batch(stone_batch)
         stone_batch.draw()
+        if board.roll_the_dice:
+            board.update_dice_batch(dice_batch)
+            dice_batch.draw()
+
 
     pyglet.app.run()

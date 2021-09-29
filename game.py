@@ -1,3 +1,6 @@
+import random
+import time
+
 import pyglet
 
 import util
@@ -23,6 +26,7 @@ class Board:
         self.shapes = []
         self.sprites = []
         self.diceimage = None
+        self.roll_the_dice = False
 
         self.window = window
         self.screensize = min(get_screensize())        # takes the min of height and width of the screen
@@ -45,7 +49,7 @@ class Board:
     def init_field_map(self):
         field_map = {}
         for stone in self.stones:
-            print(stone.position)
+            #(stone.position)
             field_map[stone.position] = stone
         return field_map
 
@@ -86,6 +90,11 @@ class Board:
             self.sprites.append(sprite)
 
         self.draw_dice(self.current_dicevalue, batch)
+
+    def update_dice_batch(self, batch):
+        i = random.randint(1,6)
+        self.draw_dice(i, batch)
+        self.roll_the_dice = False
 
     def initialize_stones(self):
         """
