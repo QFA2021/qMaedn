@@ -17,13 +17,16 @@ if __name__ == "__main__":
     window = pyglet.window.Window(width=width, height=height, resizable=True)
     pyglet.gl.glClearColor(255, 255, 255, 1.0)
     board = Board(window)
+
     board_batch = pyglet.graphics.Batch()
     stone_batch = pyglet.graphics.Batch()
     dice_batch = pyglet.graphics.Batch()
+    gamelog_batch = pyglet.graphics.Batch()
 
     load_pngs()
 
     board.initialize_board_batch(board_batch)
+    board.initialize_gamelog_batch(gamelog_batch)
     board.update_stone_batch(stone_batch)
 
 
@@ -121,9 +124,12 @@ if __name__ == "__main__":
     def on_draw():
         window.clear()
         board_batch.draw()
+        board.update_gamelog_batch(gamelog_batch)
+        gamelog_batch.draw()
         stone_batch = pyglet.graphics.Batch()
         board.update_stone_batch(stone_batch)
         stone_batch.draw()
+
         if board.roll_the_dice:
             board.update_dice_batch(dice_batch)
             dice_batch.draw()

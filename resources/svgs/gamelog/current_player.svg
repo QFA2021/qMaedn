@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg856"
+   inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"
+   sodipodi:docname="current_player.svg">
+  <defs
+     id="defs850" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="321.6722"
+     inkscape:cy="420.49706"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata853">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.5833px;line-height:0;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT';stroke-width:0.265;stroke:#000000;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       x="38.742554"
+       y="69.16964"
+       id="text1421"
+       inkscape:export-filename="C:\AAA-Data\Stipendium\Ferienakademie\QuantumMADN\qMaedn\resources\pngs\blue_turn.png"
+       inkscape:export-xdpi="159.15434"
+       inkscape:export-ydpi="159.15434"><tspan
+         sodipodi:role="line"
+         id="tspan1419"
+         x="38.742554"
+         y="69.16964"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT';stroke-width:0.265;stroke:#000000;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"><tspan
+   style="fill:#000080;stroke:#000000;stroke-opacity:1;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none"
+   id="tspan1423">Blue player:</tspan> it's your turn!</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.5833px;line-height:0;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT';stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none;stroke:#000000;stroke-opacity:1"
+       x="40.632435"
+       y="89.391365"
+       id="text1433"
+       inkscape:export-filename="C:\AAA-Data\Stipendium\Ferienakademie\QuantumMADN\qMaedn\resources\pngs\red_turn.png"
+       inkscape:export-xdpi="159.15434"
+       inkscape:export-ydpi="159.15434"><tspan
+         sodipodi:role="line"
+         id="tspan1431"
+         x="40.632435"
+         y="89.391365"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT';stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none;stroke:#000000;stroke-opacity:1"><tspan
+   style="fill:#ff0000;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none;stroke:#000000;stroke-opacity:1"
+   id="tspan1447">Red player:</tspan> it's your turn!</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.5833px;line-height:0;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT';stroke-width:0.264583;stroke:#000000;stroke-opacity:1;"
+       x="39.876484"
+       y="115.28274"
+       id="text1439"
+       inkscape:export-filename="C:\AAA-Data\Stipendium\Ferienakademie\QuantumMADN\qMaedn\resources\pngs\green_turn.png"
+       inkscape:export-xdpi="159.15421"
+       inkscape:export-ydpi="159.15421"><tspan
+         sodipodi:role="line"
+         id="tspan1437"
+         x="39.876484"
+         y="115.28274"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT';stroke-width:0.264583;stroke:#000000;stroke-opacity:1;"><tspan
+   style="fill:#008000;stroke:#000000;stroke-opacity:1;"
+   id="tspan1435">Green player:</tspan> it's your turn!</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.5833px;line-height:0;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT';stroke-width:0.265;stroke:#000000;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       x="40.632435"
+       y="143.06398"
+       id="text1445"
+       inkscape:export-filename="C:\AAA-Data\Stipendium\Ferienakademie\QuantumMADN\qMaedn\resources\pngs\yellow_turn.png"
+       inkscape:export-xdpi="159.15434"
+       inkscape:export-ydpi="159.15434"><tspan
+         sodipodi:role="line"
+         id="tspan1443"
+         x="40.632435"
+         y="143.06398"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Tw Cen MT';-inkscape-font-specification:'Tw Cen MT';stroke-width:0.265;stroke:#000000;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"><tspan
+   style="fill:#ffff00;stroke:#000000;stroke-opacity:1;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none"
+   id="tspan1441">Yellow player:</tspan> it's your turn!</tspan></text>
+  </g>
+</svg>
