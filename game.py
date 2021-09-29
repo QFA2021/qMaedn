@@ -25,7 +25,7 @@ class Board:
         self.diceimage = None
 
         self.window = window
-        self.screensize = get_screensize()
+        self.screensize = min(get_screensize())        # takes the min of height and width of the screen
         self.gridsize = min(*window.get_size()) // 13  # 12 to cover the whole window
 
         self.stones = self.initialize_stones()
@@ -162,6 +162,17 @@ class Board:
 
         # creating the dice
         self.draw_dice(1, batch)
+
+        #creating the logo
+        img = fieldpngs['logo']
+        img.anchor_x = img.height // 2
+        img.anchor_y = img.height // 2
+        width, height = get_screensize()
+        px = (max(width, height) - min(width, height))//2 + min(width, height)
+        py = height // 3
+        sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=foreground)
+        sprite.scale = height / img.height * 0.5
+        self.sprites.append(sprite)
 
 
     def initialize_players(self):

@@ -10,8 +10,8 @@ global board, window
 
 
 if __name__ == "__main__":
-    screen_size = get_screensize()
-    window = pyglet.window.Window(width=screen_size, height=screen_size, resizable=True)
+    width, height = get_screensize()
+    window = pyglet.window.Window(width=width, height=height, resizable=True)
     pyglet.gl.glClearColor(255, 255, 255, 1.0)
     board = Board(window)
     board_batch = pyglet.graphics.Batch()
