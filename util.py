@@ -111,7 +111,7 @@ def grid2lin(x, y):
 # TODO fix the visuals for all users
 
 def pix2lin(x, y, gridsize):
-    shift = min(get_screensize()) // 24.7
+    shift = int(min(get_screensize()) // 24.7)
     gx = (x - shift) // gridsize
     gy = (y - shift) // gridsize
     return grid2lin(gx, gy)
