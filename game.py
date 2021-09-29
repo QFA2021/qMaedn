@@ -25,7 +25,7 @@ class Board:
         """
         self.shapes = []
         self.sprites = []
-        self.textimage = None
+        self.textimages = [None, None]
         self.diceimage = None
         self.roll_the_dice = False
 
@@ -194,7 +194,17 @@ class Board:
         py = height // (6/5)
         sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
         sprite.scale = height / img.height * 0.05
-        self.textimage = sprite
+        self.textimages[0] = sprite
+
+        img = textpngs['do_dice']
+        img.anchor_x = img.width // 2
+        img.anchor_y = img.height // 2
+        width, height = get_screensize()
+        px = (max(width, height) - min(width, height)) // 2 + min(width, height)
+        py = height // (6 / 4.5)
+        sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
+        sprite.scale = height / img.height * 0.05
+        self.textimages[1] = sprite
 
 
     def update_gamelog_batch(self, batch):
@@ -214,7 +224,26 @@ class Board:
         py = height // (6 / 5)
         sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
         sprite.scale = height / img.height * 0.05
-        self.textimage = sprite
+        self.textimages[0] = sprite
+
+        if self.state == util.State.WAIT_DICE:
+            to_do = 'do_dice'
+        elif self.state == util.State.WAIT_PAIR:
+            to_do = 'do_entangle'
+        elif self.state == util.State.WAIT_COLLAPSE:
+            to_do = 'do_collapse'
+        elif self.state == util.State.WAIT_MOVE:
+            to_do = 'do_move'
+
+        img = textpngs[to_do]
+        img.anchor_x = img.width // 2
+        img.anchor_y = img.height // 2
+        width, height = get_screensize()
+        px = (max(width, height) - min(width, height)) // 2 + min(width, height)
+        py = height // (6 / 4.5)
+        sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
+        sprite.scale = height / img.height * 0.05
+        self.textimages[1] = sprite
 
 
     def initialize_players(self):
