@@ -259,14 +259,25 @@ class Board:
 
     def throw_stone(self, i):
         # TODO implement throwing of entangled stones
-        stone = self.field_map.pop(i)
-        start, _ = util.start_coordinates[stone.get_colour()]
-        new_pos = start
-        while self.is_occupied(new_pos) and new_pos < start + 4:
-            new_pos += 1
-        print(f'moving thrown stone to {new_pos}')
-        self.field_map[new_pos] = stone
-        stone.move_to(new_pos)
+        stone = self.field_map[i]
+        stones_and_colors = []
+        if not stone.entangled:
+            stones_and_colors.append((stone, stone.get_colour()))
+        else:
+            c1, c2 = stone.get_colours()
+            stones_and_colors.append((stone, c1))
+            stones_and_colors.append((stone.other, c2))
+            stone.disentangle(c1, c2)
+        for (stone, color) in stones_and_colors:
+            self.field_map.pop(stone.position)
+            start, _ = util.start_coordinates[color]
+            new_pos = start
+            while self.is_occupied(new_pos) and new_pos < start + 4:
+                new_pos += 1
+            print(f'moving thrown stone to {new_pos}')
+            self.field_map[new_pos] = stone
+            stone.move_to(new_pos)
+
     
     def phase_shift(self):
         print('performing phase shift operation')
