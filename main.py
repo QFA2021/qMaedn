@@ -51,8 +51,6 @@ if __name__ == "__main__":
 
         elif board.state == State.WAIT_COLLAPSE:
             if position in board.field_map:
-                # TODO: current player is no longer a color
-                # TODO: fix different colors problem
                 if board.field_map[position] == board.stone_to_be_unpaired.other or board.field_map[position] == board.stone_to_be_unpaired:
                     c1, c2 = board.field_map[position].get_colours()
                     if c1 == board.current_player.color:
@@ -75,13 +73,14 @@ if __name__ == "__main__":
     def on_mouse_release(x, y, button, modifiers):
         if board.stone_on_the_move is not None:
             stone = board.stone_on_the_move
+            print("x: ", x, "y: ", y)
             new_position = util.pix2lin(x, y, board.gridsize)
-            if not new_position or new_position == 'dice':
+            if new_position is None or new_position == 'dice':
                 return
-            print(new_position)
+            print("New position: ", new_position)
             move_valid = validation.validate(stone.position, new_position, board.current_dicevalue, stone.get_colour(), board)
             print(move_valid)
-            if move_valid or not move_valid:
+            if move_valid:
                 if board.is_occupied(new_position):
                     print(f'throwing stone at {new_position}')
                     board.throw_stone(new_position)
@@ -91,23 +90,23 @@ if __name__ == "__main__":
                 board.stone_on_the_move = None
 
 
-            if new_position in board.gate_map:
-                if board.gate_map[new_position].name == Gate.H:
-                    if stone.entangled:
-                        board.state = State.WAIT_COLLAPSE
-                        board.stone_to_be_unpaired = stone
-                    else:
-                        board.state = State.WAIT_PAIR
+                if new_position in board.gate_map:
+                    if board.gate_map[new_position].name == Gate.H:
+                        if stone.entangled:
+                            board.state = State.WAIT_COLLAPSE
+                            board.stone_to_be_unpaired = stone
+                        else:
+                            board.state = State.WAIT_PAIR
+                            board.stone_to_be_paired = stone
+
+
+                    elif board.gate_map[new_position].name == Gate.X:
                         board.stone_to_be_paired = stone
-
-
-                elif board.gate_map[new_position].name == Gate.X:
-                    board.stone_to_be_paired = stone
-                    board.state = State.WAIT_COLOR
-            else:
-                board.state = State.WAIT_DICE
-                board.current_player = board.current_player.next
-                print(board.current_player.name)
+                        board.state = State.WAIT_COLOR
+                else:
+                    board.state = State.WAIT_DICE
+                    board.current_player = board.current_player.next
+                    print(board.current_player.name)
 
 
     @window.event
