@@ -1,5 +1,4 @@
 import random
-import time
 
 import pyglet
 
@@ -30,7 +29,7 @@ class Board:
         self.roll_the_dice = False
 
         self.window = window
-        self.screensize = min(get_screensize())        # takes the min of height and width of the screen
+        self.screensize = min(get_screensize())  # takes the min of height and width of the screen
         self.gridsize = min(*window.get_size()) // 13  # 12 to cover the whole window
 
         self.stones = self.initialize_stones()
@@ -50,7 +49,7 @@ class Board:
     def init_field_map(self):
         field_map = {}
         for stone in self.stones:
-            #(stone.position)
+            # (stone.position)
             field_map[stone.position] = stone
         return field_map
 
@@ -93,7 +92,7 @@ class Board:
         self.draw_dice(self.current_dicevalue, batch)
 
     def update_dice_batch(self, batch):
-        i = random.randint(1,6)
+        i = random.randint(1, 6)
         self.draw_dice(i, batch)
         self.roll_the_dice = False
 
@@ -158,7 +157,8 @@ class Board:
             self.sprites.append(sprite)
 
             label = pyglet.text.Label(str(position), font_name='Arial', font_size=12, x=px, y=py,
-                    color=(0, 0, 0, 255), anchor_x='center', anchor_y='center', batch=batch, group=foreground)
+                                      color=(0, 0, 0, 255), anchor_x='center', anchor_y='center', batch=batch,
+                                      group=foreground)
 
         # creating the connection lines between the phaseshift gates
         for i, j in zip(IDX_PHASE_1, IDX_PHASE_2):
@@ -177,17 +177,16 @@ class Board:
         # creating the dice
         self.draw_dice(1, batch)
 
-        #creating the logo
+        # creating the logo
         img = fieldpngs['logo']
         img.anchor_x = img.width // 2
         img.anchor_y = img.height // 2
         width, height = get_screensize()
-        px = (max(width, height) - min(width, height))//2 + min(width, height)
+        px = (max(width, height) - min(width, height)) // 2 + min(width, height)
         py = height // 3
         sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=foreground)
         sprite.scale = height / img.height * 0.5
         self.sprites.append(sprite)
-
 
     def initialize_gamelog_batch(self, batch):
         img = textpngs['blue_turn']
@@ -195,7 +194,7 @@ class Board:
         img.anchor_y = img.height // 2
         width, height = get_screensize()
         px = (max(width, height) - min(width, height)) // 2 + min(width, height)
-        py = height // (6/5)
+        py = height // (6 / 5)
         sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
         sprite.scale = height / img.height * 0.05
         self.textimages[0] = sprite
@@ -209,7 +208,6 @@ class Board:
         sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
         sprite.scale = height / img.height * 0.05
         self.textimages[1] = sprite
-
 
     def update_gamelog_batch(self, batch):
         if self.current_player.color == Color.BLUE:
@@ -254,7 +252,6 @@ class Board:
         sizefactor = 1
         self.textimages[1] = sprite
 
-
     def initialize_players(self):
         player_1 = Player(Color.BLUE, "Player 1")
         player_2 = Player(Color.GREEN, "Player 2")
@@ -281,7 +278,6 @@ class Board:
         sprite = pyglet.sprite.Sprite(img, px, py, batch=batch, group=pyglet.graphics.OrderedGroup(3))
         sprite.scale = 0.45 * self.screensize / 1000
         self.diceimage = sprite
-
 
     def is_occupied(self, i, color=None):
         if i not in self.field_map:
@@ -313,6 +309,7 @@ class Board:
             stone.move_to(new_pos)
 
     
+
     def phase_shift(self):
         print('performing phase shift operation')
         new_field_map = {}
@@ -325,7 +322,7 @@ class Board:
             new_field_map[new_position] = stone
             stone.move_to(new_position)
         self.field_map = new_field_map
-    
+
     # note: this counts the number of *HALF* stones to account for entanglement
     def count_stones_per_color(self):
         count_map = {}
@@ -360,6 +357,7 @@ class Player:
         self.name = name
         self.color = color
         self.next = None
+        self.max_no_of_dices = 3
 
 
 class Stone:
@@ -420,13 +418,26 @@ class Stone:
 
     def move_to(self, position):
         """
-        Moves a stone from it's current position to a new position.
+        Moves a stone from its current position to a new position.
         :param position:int
                 The index of the field where the stone is supposed to move to.
-        :return:
         """
-        # TODO: The validator validates here?
         self.position = position
+
+    #TODO: util.start_coordinates[self.color] should really be for all colors
+    def is_inhouse(self):
+        return self.position in range(util.start_coordinates[self.color][0], util.start_coordinates[self.color][0] + 4)
+
+    def is_done(self, board):
+        return self.position in range(util.house_coordinates[self.color][1],
+                                      util.house_coordinates[self.color][1] + 4) and not self.can_move_in_end_house(
+            board)
+
+    def can_move_in_end_house(self, board):
+        for i in range(self.position + 1, util.house_coordinates[self.color][1] + 4):
+            if i not in board.field_map:
+                return False
+        return True
 
 
 class HadamardGate:

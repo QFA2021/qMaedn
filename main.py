@@ -1,16 +1,13 @@
+import random
+
 import pyglet.graphics
-import time
 
 import validation
 from game import *
-from pyglet.window import mouse
-import random
-
 from imageload import load_pngs
 from util import State, get_screensize, Gate
 
 global board, window
-
 
 if __name__ == "__main__":
     width, height = get_screensize()
@@ -37,9 +34,20 @@ if __name__ == "__main__":
 
         if board.state == State.WAIT_DICE:
             if position == 'dice':
-                board.current_dicevalue = random.randint(1,6)
+                board.current_dicevalue = random.randint(1, 6)
                 board.roll_the_dice = True
                 print(f'you diced a {board.current_dicevalue}')
+                board.current_player.max_no_of_dices -= 1
+
+                if board.current_dicevalue != 6 and can_dice_again():
+                    if board.current_player.max_no_of_dices != 0:
+                        return
+                    else:
+                        board.current_player.max_no_of_dices = 3
+                        board.current_player = board.current_player.next
+                        return
+                board.current_player.max_no_of_dices = 3
+
                 board.state = State.WAIT_MOVE
             else:
                 return
@@ -58,7 +66,8 @@ if __name__ == "__main__":
 
         elif board.state == State.WAIT_COLLAPSE:
             if position in board.field_map:
-                if board.field_map[position] == board.stone_to_be_unpaired.other or board.field_map[position] == board.stone_to_be_unpaired:
+                if board.field_map[position] == board.stone_to_be_unpaired.other or board.field_map[
+                    position] == board.stone_to_be_unpaired:
                     c1, c2 = board.field_map[position].get_colours()
                     if c1 == board.current_player.color:
                         other_color = c2
@@ -87,6 +96,20 @@ if __name__ == "__main__":
                 board.stone_on_the_move = stone
 
 
+    def can_dice_again():
+        player_stones = []
+        for v in board.field_map.values():
+            if board.current_player.color in v.get_colours():
+                player_stones.append(v)
+
+        dice_again = True
+        for s in player_stones:
+            if not s.is_inhouse() and not s.is_done(board):
+                dice_again = False
+        print(board.current_player.name, " can dice again: ", dice_again)
+        return dice_again
+
+
     @window.event
     def on_mouse_release(x, y, button, modifiers):
         if board.stone_on_the_move is not None:
@@ -96,9 +119,10 @@ if __name__ == "__main__":
             if new_position is None or new_position == 'dice':
                 return
             print("New position: ", new_position)
-            move_valid = validation.validate(stone.position, new_position, board.current_dicevalue, stone.get_colour(), board)
+            move_valid = validation.validate(stone.position, new_position, board.current_dicevalue, stone.get_colour(),
+                                             board)
             print(move_valid)
-            if move_valid or not move_valid:
+            if move_valid:
                 if board.is_occupied(new_position):
                     print(f'throwing stone at {new_position}')
                     board.throw_stone(new_position)
@@ -106,7 +130,6 @@ if __name__ == "__main__":
                 board.field_map[new_position] = stone
                 stone.move_to(new_position)
                 board.stone_on_the_move = None
-
 
                 if new_position in board.gate_map:
                     if board.gate_map[new_position].name == Gate.H:
@@ -134,7 +157,7 @@ if __name__ == "__main__":
                             # all color have same number -> let the player choose
                             if list(color_frequency.values()) == [8, 8, 8, 8]:
                                 print("Stone changing to any color because all have same count")
-                                board.state = State.WAIT_COLOR         
+                                board.state = State.WAIT_COLOR
                                 board.stone_to_be_paired = stone
 
                                 board.allowed_colors = list(Color)
@@ -163,16 +186,14 @@ if __name__ == "__main__":
                                 board.allowed_colors = minimal_colors
                                 board.state = State.WAIT_COLOR
                                 board.stone_to_be_paired = stone
-                        else: # stone is entangled
+                        else:  # stone is entangled
                             board.state = State.WAIT_DICE
                             board.current_player = board.current_player.next
-
-                            
 
                         # board.state = State.WAIT_COLOR
                         # board.field_map[new_position].color = Color.RED
                     elif board.gate_map[new_position].name == Gate.S:
-                        idx_1, idx_2 =  board.gate_map[new_position].position
+                        idx_1, idx_2 = board.gate_map[new_position].position
                         if board.is_occupied(idx_1) and board.is_occupied(idx_2):
                             board.phase_shift()
                         board.state = State.WAIT_DICE
@@ -182,6 +203,7 @@ if __name__ == "__main__":
                     if board.current_dicevalue != 6:
                         board.current_player = board.current_player.next
                     print(board.current_player.name)
+
 
     @window.event
     def on_draw():
