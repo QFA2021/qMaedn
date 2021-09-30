@@ -412,6 +412,7 @@ class Stone:
         """
         self.position = position
 
+    #TODO: util.start_coordinates[self.color] should really be for all colors
     def is_inhouse(self):
         return self.position in range(util.start_coordinates[self.color][0], util.start_coordinates[self.color][0] + 4)
 

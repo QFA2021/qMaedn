@@ -40,6 +40,10 @@ def validate(x,y,a,color, board): #x Ursprungsfeld, y Zielfeld, a Augenzahl, pla
     if board.is_occupied(y, color):
         return False
 
+    if x in range(start_first, start_first + 4) and y == start_field and a != 6:
+        print('6 must be diced for a stone to leave its starting field')
+        return False
+
     if x in range(start_first, start_first + 4) and y != start_field:
         print('stone must start out at to start field')
         return False

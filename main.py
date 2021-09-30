@@ -1,11 +1,9 @@
+import random
+
 import pyglet.graphics
-import time
 
 import validation
 from game import *
-from pyglet.window import mouse
-import random
-
 from imageload import load_pngs
 from util import State, get_screensize, Gate
 
@@ -36,10 +34,10 @@ if __name__ == "__main__":
 
         if board.state == State.WAIT_DICE:
             if position == 'dice':
-                board.current_dicevalue = random.randint(1,6)
+                board.current_dicevalue = random.randint(1, 6)
                 board.roll_the_dice = True
                 print(f'you diced a {board.current_dicevalue}')
-                board.current_player.max_no_of_dices -=1
+                board.current_player.max_no_of_dices -= 1
 
                 if board.current_dicevalue != 6 and can_dice_again():
                     if board.current_player.max_no_of_dices != 0:
@@ -49,6 +47,7 @@ if __name__ == "__main__":
                         board.current_player = board.current_player.next
                         return
                 board.current_player.max_no_of_dices = 3
+
                 board.state = State.WAIT_MOVE
             else:
                 return
@@ -96,10 +95,11 @@ if __name__ == "__main__":
             else:
                 board.stone_on_the_move = stone
 
+
     def can_dice_again():
         player_stones = []
         for v in board.field_map.values():
-            if v.color == board.current_player.color:
+            if board.current_player.color in v.get_colours():
                 player_stones.append(v)
 
         dice_again = True
@@ -108,6 +108,7 @@ if __name__ == "__main__":
                 dice_again = False
         print(board.current_player.name, " can dice again: ", dice_again)
         return dice_again
+
 
     @window.event
     def on_mouse_release(x, y, button, modifiers):
@@ -121,7 +122,7 @@ if __name__ == "__main__":
             move_valid = validation.validate(stone.position, new_position, board.current_dicevalue, stone.get_colour(),
                                              board)
             print(move_valid)
-            if move_valid or not move_valid:
+            if move_valid:
                 if board.is_occupied(new_position):
                     print(f'throwing stone at {new_position}')
                     board.throw_stone(new_position)
@@ -156,7 +157,7 @@ if __name__ == "__main__":
                             # all color have same number -> let the player choose
                             if list(color_frequency.values()) == [8, 8, 8, 8]:
                                 print("Stone changing to any color because all have same count")
-                                board.state = State.WAIT_COLOR         
+                                board.state = State.WAIT_COLOR
                                 board.stone_to_be_paired = stone
 
                                 board.allowed_colors = list(Color)
@@ -185,16 +186,14 @@ if __name__ == "__main__":
                                 board.allowed_colors = minimal_colors
                                 board.state = State.WAIT_COLOR
                                 board.stone_to_be_paired = stone
-                        else: # stone is entangled
+                        else:  # stone is entangled
                             board.state = State.WAIT_DICE
                             board.current_player = board.current_player.next
-
-                            
 
                         # board.state = State.WAIT_COLOR
                         # board.field_map[new_position].color = Color.RED
                     elif board.gate_map[new_position].name == Gate.S:
-                        idx_1, idx_2 =  board.gate_map[new_position].position
+                        idx_1, idx_2 = board.gate_map[new_position].position
                         if board.is_occupied(idx_1) and board.is_occupied(idx_2):
                             board.phase_shift()
                         board.state = State.WAIT_DICE
@@ -204,6 +203,7 @@ if __name__ == "__main__":
                     if board.current_dicevalue != 6:
                         board.current_player = board.current_player.next
                     print(board.current_player.name)
+
 
     @window.event
     def on_draw():
